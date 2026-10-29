@@ -149,3 +149,11 @@
 body:has(#learn-panel:not([hidden])) .toast {
   bottom: max(5.5rem, calc(env(safe-area-inset-bottom) + 4rem));
 }
+
+/* Upright phones: toasts use the full width (with a margin), so short messages fit on one or two lines. */
+@media (max-width: 35em) {
+  .toast {
+    width: calc(100vw - 2rem);
+    max-width: none;
+  }
+}

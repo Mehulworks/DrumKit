@@ -96,3 +96,13 @@
 }
 
 
+
+/* Phones: smaller and slimmer, so it takes less of the kit. */
+@media (max-width: 35em) {
+  .credits {
+    right: max(0.5rem, env(safe-area-inset-right));
+    bottom: max(0.375rem, env(safe-area-inset-bottom));
+    padding: 0.0625rem 0.375rem;
+    font-size: 0.625rem;
+  }
+}

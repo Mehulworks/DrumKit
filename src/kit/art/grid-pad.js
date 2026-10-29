@@ -35,19 +35,23 @@ const ICON = {
     <rect x="${cx - s * 0.18}" y="${cy + s * 0.88}" width="${s * 0.36}" height="${s * 0.38}" rx="${s * 0.06}"/>`,
 };
 
-/** @param {{id: string, x: number, y: number, w: number, h: number, label: string, role: string}} pad */
-export function drawGridPad({ id, x, y, w, h, label, role }) {
+/** @param {{id: string, x: number, y: number, w: number, h: number, label: string, role: string, unit?: number}} pad unit:
+ *   drawing units per screen pixel, so text and spacing stay the same size on every screen */
+export function drawGridPad({ id, x, y, w, h, label, role, unit = 1 }) {
   const left = x - w / 2;
   const top = y - h / 2;
-  const s = Math.min(w, h) * 0.2;
-  const icon = (ICON[id] ?? ICON.tom1)(x, y + h * 0.02, s);
+  const pad = 12 * unit; // inner padding: 12 screen pixels
+  // The drawing sits in the middle, a little low so it clears the name (top left); the name and the key badge sit in
+  // opposite corners, so on short phone tiles the drawing can use most of the height.
+  const s = Math.min(w * 0.16, (h - pad * 2) * 0.3);
+  const icon = (ICON[id] ?? ICON.tom1)(x, y + 6 * unit, s);
   return `
   <defs><radialGradient id="pad-glow-${id}" cx="0" cy="0" r="1" gradientUnits="objectBoundingBox">
     <stop offset="0" class="pad-glow-stop" data-role="${role}"/><stop offset="1" class="pad-glow-stop pad-glow-end" data-role="${role}"/>
   </radialGradient></defs>
   <rect class="pad-tile" data-role="${role}" x="${left}" y="${top}" width="${w}" height="${h}" rx="28"/>
   <rect class="pad-tile-glow" x="${left}" y="${top}" width="${w}" height="${h}" rx="28" fill="url(#pad-glow-${id})"/>
-  <g class="pad-tile-icon" data-role="${role}">${icon}</g>
-  <rect class="pad-tile-bar" data-role="${role}" x="${left + 28}" y="${top + h - 22}" width="${Math.min(110, w - 56)}" height="6" rx="3"/>
-  <text class="pad-tile-name" x="${left + 28}" y="${top + 50}">${label}</text>`;
+  <g class="pad-tile-icon" data-role="${role}" stroke-width="${2.5 * unit}">${icon}</g>
+  <rect class="pad-tile-bar" data-role="${role}" x="${left + pad}" y="${top + h - pad - 3 * unit}" width="${Math.min(40 * unit, w - pad * 2)}" height="${3 * unit}" rx="${1.5 * unit}"/>
+  <text class="pad-tile-name" x="${left + pad}" y="${top + pad + 11 * unit}" font-size="${14 * unit}">${label}</text>`;
 }

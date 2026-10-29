@@ -24,7 +24,6 @@
 .pad-tile-name {
   fill: var(--color-text);
   font-family: var(--font-body);
-  font-size: 30px; /* drawing units, scaled with the grid */
   font-weight: 600;
 }
 
@@ -57,7 +56,6 @@ body.is-concert .pad-tile {
 .pad-tile-icon {
   fill: none;
   stroke: var(--role);
-  stroke-width: 5;
   stroke-linecap: round;
   opacity: 0.6;
 }

@@ -16,11 +16,15 @@ const ROW_WEIGHT = (index, rows) => (index === rows - 1 ? 1.15 : 1);
 const PAD_WEIGHT = { kick: 1.3, snare: 1.15 };
 // On big screens tiles stop growing at about this size (screen pixels), and the grid sits centred with room around it.
 const MAX_TILE = { width: 300, height: 220 };
+// Upright screens: the grid takes this share of the height and sits at the bottom, so the top row stays within the
+// thumb's reach (Fitts's law); the space above stays empty.
+const UPRIGHT_SHARE = 0.78;
 
 /**
  * @param {{pads: Array<{id: string}>}} kit
  * @param {{width: number, height: number}} size the kit area in screen pixels
- * @returns {object} the kit with grid pads (each has x, y, w, h, role, art 'gridpad' and grid: true) and its view size
+ * @returns {object} the kit with grid pads (each has x, y, w, h, role, unit, art 'gridpad' and grid: true) and its view size;
+ *   unit is drawing units per screen pixel, so text can be sized in pixels
  */
 export function gridKit(kit, size) {
   const shape = Math.min(3, Math.max(0.4, size.width / size.height || 16 / 9));
@@ -36,14 +40,15 @@ export function gridKit(kit, size) {
   const rows = plan.filter((row) => row.length);
 
   const totalWeight = rows.reduce((sum, _, i) => sum + ROW_WEIGHT(i, rows.length), 0);
-  const free = view.height - MARGIN * 2 - GAP * (rows.length - 1);
+  const usable = upright ? view.height * UPRIGHT_SHARE : view.height;
+  const free = usable - MARGIN * 2 - GAP * (rows.length - 1);
   const rowHeights = rows.map((_, i) => Math.min((free * ROW_WEIGHT(i, rows.length)) / totalWeight, MAX_TILE.height * perPixel * ROW_WEIGHT(i, rows.length)));
   const gridHeight = rowHeights.reduce((a, b) => a + b, 0) + GAP * (rows.length - 1);
   // One width for every row (the widest row's, capped on big screens), so rows with fewer tiles stretch them end to end.
   const rowNeed = (row) => row.reduce((sum, id) => sum + (PAD_WEIGHT[id] ?? 1), 0) * MAX_TILE.width * perPixel + GAP * (row.length - 1);
   const rowWidth = Math.min(view.width - MARGIN * 2, Math.max(...rows.map(rowNeed)));
   const pads = [];
-  let top = (view.height - gridHeight) / 2;
+  let top = upright ? view.height - MARGIN - gridHeight : (view.height - gridHeight) / 2;
   rows.forEach((row, i) => {
     const rowHeight = rowHeights[i];
     const weights = row.map((id) => PAD_WEIGHT[id] ?? 1);
@@ -52,7 +57,7 @@ export function gridKit(kit, size) {
     let left = (view.width - rowWidth) / 2;
     row.forEach((id, j) => {
       const w = (width * weights[j]) / sum;
-      pads.push({ ...byId.get(id), art: 'gridpad', grid: true, role: ROLE[id] ?? 'tom', x: left + w / 2, y: top + rowHeight / 2, w, h: rowHeight, r: undefined });
+      pads.push({ ...byId.get(id), art: 'gridpad', grid: true, unit: perPixel, role: ROLE[id] ?? 'tom', x: left + w / 2, y: top + rowHeight / 2, w, h: rowHeight, r: undefined });
       left += w + GAP;
     });
     top += rowHeight + GAP;
