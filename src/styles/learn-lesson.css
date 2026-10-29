@@ -1,0 +1,126 @@
+/* During a lesson: drum labels on the kit, the goal bar in the scoreboard and the lesson tip caption. */
+
+/* During a lesson: the drums it uses are labelled (name and key, saffron edge); the others are dimmed a little. */
+.lesson-labels {
+  pointer-events: none;
+}
+
+.lesson-label rect {
+  fill: rgb(0 0 0 / 0.62);
+  stroke: var(--color-accent);
+  stroke-width: 2;
+}
+
+.lesson-label text {
+  font: 600 20px var(--font-body);
+}
+
+/* Darkened rather than faded, so drums that overlap (toms over the kick) stay solid. */
+.pad-art.is-dimmed {
+  filter: brightness(0.45) saturate(0.6);
+  transition: filter 0.2s ease;
+}
+
+/* With a lesson's own labels showing, the plain key labels step aside. */
+.kit-svg:has(.lesson-label) .kit-labels {
+  display: none;
+}
+
+/* The goal bar in the scoreboard: the score fills it, the line marks 80% (the pass mark); it turns green once passing. */
+.hud-goal {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.hud-goal-bar {
+  position: relative;
+  width: 6rem;
+  height: 1.25rem;
+}
+
+.hud-goal-text {
+  min-width: 8.5em;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.hud-goal-bar::before,
+.hud-goal-fill {
+  content: "";
+  position: absolute;
+  top: 0.375rem;
+  left: 0;
+  height: 0.5rem;
+  border-radius: 0.25rem;
+}
+
+.hud-goal-bar::before {
+  right: 0;
+  background: color-mix(in srgb, var(--color-text) 14%, transparent);
+}
+
+.hud-goal-fill {
+  width: 0;
+  background: var(--color-accent);
+  transition: width 0.25s ease;
+}
+
+.hud-goal-fill.is-passing {
+  background: var(--color-good);
+}
+
+.hud-goal-mark {
+  position: absolute;
+  top: 2px;
+  left: 80%;
+  width: 2px;
+  height: 1rem;
+  border-radius: 1px;
+  background: var(--color-text);
+}
+
+.learn-hud.is-steps .hud-goal {
+  display: none;
+}
+
+/* The lesson tip, as a caption near the bottom of the screen. */
+.learn-caption {
+  position: fixed;
+  z-index: 6;
+  left: 50%;
+  bottom: max(2.25rem, env(safe-area-inset-bottom));
+  max-width: min(40rem, calc(100vw - 2rem));
+  margin: 0;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-surface) 90%, transparent);
+  color: var(--color-text);
+  font-size: 0.9375rem;
+  text-align: center;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.08);
+  translate: -50% 0;
+  pointer-events: none;
+}
+
+.learn-caption[hidden] {
+  display: none;
+}
+
+.learn-caption b {
+  margin-right: 0.375rem;
+  color: var(--color-accent);
+}
+
+@media (max-height: 30em) {
+  .learn-caption {
+    bottom: 0.375rem;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.8125rem;
+  }
+
+  .hud-goal {
+    display: none;
+  }
+}

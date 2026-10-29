@@ -1,0 +1,106 @@
+/* Transport: the Rec pill in the toolbar (with its timer while recording) and its states. */
+.transport {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-right: var(--space-sm);
+  border-right: 1px solid var(--color-border);
+}
+
+/* The Rec button sits in a pill, like the other toolbar tools. */
+.recorder-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0.1875rem;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface);
+}
+
+.transport-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  min-width: 1.875rem;
+  height: 1.5rem; /* with the pill's padding and border: 32px, like every button */
+  padding: 0 0.5rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.transport-button:hover:not(:disabled) {
+  background: var(--color-surface-hover);
+}
+
+/* Record: a red dot when idle; solid red with a pulsing dot and a running timer while recording. */
+.record-dot {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+  background: var(--color-record);
+}
+
+/* :hover is listed too, so the hover colour never hides the red. */
+.record-button.is-recording,
+.record-button.is-recording:hover:not(:disabled) {
+  background: var(--color-record);
+  color: #fff;
+}
+
+.record-button.is-recording .record-dot {
+  border-radius: 2px;
+  background: #fff;
+  animation: record-pulse 1s ease-in-out infinite;
+}
+
+/* The last 10 seconds before the 2-minute limit: the recording timer blinks. */
+.record-button.is-near-limit .record-label {
+  animation: record-pulse 0.5s ease-in-out infinite;
+}
+
+/* Count-in: red outline and a fast-blinking dot while the four clicks play. */
+.record-button.is-counting {
+  box-shadow: inset 0 0 0 1.5px var(--color-record);
+  color: var(--color-record);
+}
+
+.record-button.is-counting .record-dot {
+  animation: record-pulse 0.5s ease-in-out infinite;
+}
+
+@keyframes record-pulse {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+.transport-button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .record-dot,
+  .record-label {
+    animation: none !important;
+  }
+}
+
+/* Upright phones: the recorder sits on its own row, so no divider line is needed after it. */
+@media (max-width: 35em) {
+  .transport {
+    padding-right: 0;
+    border-right: 0;
+  }
+}

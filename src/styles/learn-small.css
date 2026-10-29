@@ -1,0 +1,68 @@
+/* Learn bar on smaller screens: the grid on its own line, and icons only on phones held sideways. */
+
+/* Narrower screens: the grid gets its own line under the name and buttons. */
+@media (max-width: 68.75em) {
+  .learn-panel {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-areas: "info actions fold" "grid grid grid";
+  }
+}
+
+/* Phones held sideways: icons only, the tip cut to one line, a shorter grid, so the kit keeps its room. */
+@media (max-height: 30em) {
+  .learn-panel {
+    padding-block: 0.25rem;
+    row-gap: 0.25rem;
+  }
+
+  .learn-title {
+    font-size: 0.9375rem;
+  }
+
+  .learn-meta {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .learn-actions .panel-button-text {
+    display: none;
+  }
+
+  .grid-cell,
+  .grid-lead {
+    height: 0.5625rem;
+  }
+
+  .grid-cell i {
+    width: 0.375rem;
+    height: 0.375rem;
+  }
+
+  .grid-name,
+  .grid-count {
+    font-size: 0.5625rem;
+  }
+
+  /* The scoreboard becomes a small pill in the top-right corner, off the drums. */
+  .hud-board {
+    left: auto;
+    right: 0.75rem;
+    gap: 0.625rem;
+    padding: 0.25rem 0.75rem;
+    translate: none;
+  }
+
+  .hud-word {
+    min-width: 4.5em;
+    font-size: 1rem;
+  }
+
+  .hud-stat b {
+    font-size: 0.9375rem;
+  }
+
+  .hud-stat small {
+    font-size: 0.5625rem;
+  }
+}

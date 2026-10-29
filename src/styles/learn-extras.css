@@ -1,0 +1,170 @@
+/* Lesson bar extras: Demo, the click and the speed. On bigger screens they sit on the bar in their usual order (Demo
+   before Start); on phones they move into a ⋮ dropdown with their names, so the bar keeps room for the lesson's name. */
+.learn-actions {
+  position: relative;
+}
+
+.learn-extras {
+  display: contents;
+}
+
+.learn-actions > .learn-mode { order: 0; }
+.learn-extras > [data-learn="demo"] { order: 1; }
+.learn-actions > [data-learn="start"] { order: 2; }
+.learn-extras > .learn-tertiary { order: 3; }
+.learn-actions > .learn-next { order: 4; }
+
+.extras-label,
+.extras-switch,
+.learn-more-button {
+  display: none;
+}
+
+/* The corner: ⋮ (phones only) beside ✕. */
+.learn-corner {
+  grid-area: fold;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+@media (max-width: 35em), (max-width: 60em) and (max-height: 30em) {
+  .learn-more-button {
+    display: inline-flex;
+  }
+
+  .learn-actions {
+    position: static; /* the dropdown is placed from the lesson bar's corner instead */
+  }
+
+  .learn-extras {
+    position: absolute;
+    z-index: 30;
+    top: 2.75rem;
+    right: 0.5rem;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+    min-width: 13rem;
+    padding: 0.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    box-shadow: 0 10px 28px rgb(0 0 0 / 0.35);
+  }
+
+  .learn-extras.is-open {
+    display: flex;
+  }
+
+  /* Inside the dropdown everything shows its name: "Demo", "Click", "Speed − 100% +". */
+  .learn-extras .panel-button-text,
+  .learn-extras .extras-label {
+    display: inline;
+  }
+
+  /* Rows like the main ⋮ menu: icon and name, no outline; Click ends in an on/off switch. */
+  .learn-extras > [data-learn="demo"],
+  .learn-extras .learn-click {
+    justify-content: flex-start;
+    gap: 0.625rem;
+    width: 100%;
+    min-height: 2.5rem;
+    padding: 0 0.625rem;
+    border: 0;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--color-text);
+    font-weight: 400;
+    font-size: 0.875rem;
+  }
+
+  .learn-extras > [data-learn="demo"]:hover:not(:disabled),
+  .learn-extras .learn-click:hover {
+    background: var(--color-surface-hover);
+  }
+
+  .learn-extras svg {
+    color: var(--color-accent);
+  }
+
+  .learn-extras .learn-tertiary {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  .learn-extras .learn-click {
+    flex-basis: 100%;
+  }
+
+  .extras-switch {
+    display: block;
+    flex: none;
+    width: 2.125rem;
+    height: 1.25rem;
+    margin-left: auto;
+    border-radius: 999px;
+    background: radial-gradient(circle, #fff 6px, transparent 6.5px) left center / 20px 20px no-repeat, var(--color-text-muted);
+    transition: background-position 0.15s ease, background-color 0.15s ease;
+  }
+
+  .learn-click[aria-pressed="true"] .extras-switch {
+    background-color: var(--color-accent);
+    background-position: right center;
+  }
+
+  .extras-speed {
+    margin-right: auto;
+    padding-left: 0.625rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* The short info line ("60 BPM · Pass 13 of 16") on phones, the full one elsewhere. */
+.meta-short {
+  display: none;
+}
+
+@media (max-width: 35em), (max-width: 60em) and (max-height: 30em) {
+  .meta-long {
+    display: none;
+  }
+
+  .meta-short {
+    display: inline;
+  }
+}
+
+/* Upright phones: the lesson's name and info get their own row (with the close button), then the controls, then the
+   beat grid, so the text is never squeezed into a narrow column. */
+@media (max-width: 35em) {
+  .learn-panel {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "info fold" "actions actions" "grid grid";
+  }
+
+  .learn-corner {
+    align-self: start;
+  }
+
+  .learn-actions {
+    justify-content: flex-start;
+  }
+}
+
+/* The mode switch and Start are the same height (32px) on every screen. */
+.learn-mode button {
+  height: 1.5rem;
+}
+
+.learn-actions > [data-learn="start"] {
+  height: 2rem;
+  min-height: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .extras-switch {
+    transition: none;
+  }
+}

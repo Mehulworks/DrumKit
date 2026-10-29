@@ -1,0 +1,71 @@
+/* Countdown: the big 3, 2, 1 in the middle of the kit area before a recording, then a short red "REC" flash. */
+.countdown {
+  position: fixed;
+  z-index: 7;
+  display: grid;
+  place-items: center;
+  width: 1.5em;
+  height: 1.5em;
+  border: 3px solid var(--color-record);
+  border-radius: 50%;
+  background: rgb(17 18 20 / 0.88);
+  box-shadow: 0 8px 28px rgb(0 0 0 / 0.45);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: clamp(2.75rem, 11vmin, 6rem);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+  translate: -50% -50%;
+  animation: countdown-pop 0.8s ease-out both;
+}
+
+.countdown[hidden] {
+  display: none;
+}
+
+.countdown.is-rec {
+  background: var(--color-record);
+  color: #fff;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(1.5rem, 6vmin, 3rem);
+  width: auto;
+  height: auto;
+  border-color: #fff;
+  border-radius: 999px;
+  letter-spacing: 0.06em;
+  line-height: 1.6;
+  padding: 0 0.6em;
+  animation-duration: 0.7s;
+}
+
+/* Each number pops in large, then settles and fades a little before the next one. */
+@keyframes countdown-pop {
+  0% {
+    opacity: 0.5;
+    scale: 1.5;
+  }
+  18% {
+    opacity: 1;
+    scale: 1;
+  }
+  100% {
+    opacity: 0.85;
+    scale: 0.92;
+  }
+}
+
+/* Reduce motion: no zoom, just a soft fade in. */
+@keyframes countdown-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .countdown {
+    animation-name: countdown-fade;
+    animation-duration: 0.3s;
+  }
+}

@@ -1,0 +1,76 @@
+<!doctype html>
+<!-- Page shell: the toolbar, the panels, the kit area, the Customize tab and the drawers, the page details for search
+     engines and link previews, and the app script. -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Drum Kit: play drums in your browser</title>
+    <meta name="description" content="Play a realistic drum kit in your browser: learn beats step by step, record in layers and play to a crowd. Made by Mehul Varshney." />
+    <meta name="author" content="Mehul Varshney" />
+    <meta name="theme-color" content="#111214" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="canonical" href="https://drummingkit.vercel.app/" />
+    <!-- Link previews (WhatsApp, LinkedIn, X...): full addresses, as some apps need them. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://drummingkit.vercel.app/" />
+    <meta property="og:title" content="Drum Kit: play drums in your browser" />
+    <meta property="og:description" content="A realistic drum kit you can play, learn and record with, right in your browser. Made by Mehul Varshney." />
+    <meta property="og:image" content="https://drummingkit.vercel.app/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script>
+      // Applies a saved light theme before the page draws, so it does not flash dark first.
+      // If you change this script, update its sha256 hash in vercel.json (Content-Security-Policy) or it will be blocked.
+      try {
+        if (JSON.parse(localStorage.getItem('drumkit-settings'))?.theme === 'light') {
+          document.documentElement.dataset.theme = 'light';
+        }
+      } catch {}
+    </script>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-start">
+        <h1 class="title"><span class="title-logo" aria-hidden="true"></span><span class="title-text">Drum Kit</span></h1>
+      </div>
+      <div id="mode-switch" class="segmented" role="group" aria-label="Play mode"></div>
+      <div class="topbar-end">
+        <div id="transport" class="transport"></div>
+        <div class="toolbar-buttons">
+          <button type="button" id="concert-button" class="icon-button feature-concert"></button>
+          <button type="button" id="learn-button" class="icon-button feature-learn" aria-controls="learn-drawer"
+            aria-expanded="false"></button>
+          <div class="more">
+            <button type="button" id="more-button" class="icon-button"></button>
+            <div id="more-menu" class="more-menu" hidden>
+              <button type="button" id="eq-button" class="icon-button" aria-controls="kit-drawer"></button>
+              <button type="button" id="focus-button" class="icon-button"></button>
+              <button type="button" id="theme-button" class="icon-button menu-toggle"></button>
+              <div class="menu-divider" role="separator"></div>
+              <div id="menu-settings" class="menu-settings"></div>
+              <div class="menu-divider" role="separator"></div>
+              <button type="button" id="help-button" class="icon-button" aria-controls="help-drawer"></button>
+              <button type="button" id="reset-all" class="icon-button menu-reset"></button>
+              <div id="menu-credit" class="menu-credit"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <section id="recording-panel" class="recording-panel" aria-label="Your recording" hidden></section>
+    <section id="learn-panel" class="recording-panel learn-panel" aria-label="Lesson" hidden></section>
+    <main id="kit" class="kit"></main>
+    <footer id="credits" class="credits"></footer>
+    <button type="button" id="focus-exit" class="focus-exit"></button>
+    <div id="learn-hud" class="learn-hud" hidden></div>
+    <button type="button" id="kit-button" class="kit-tab" aria-controls="kit-drawer" aria-expanded="false"
+      aria-label="Customize: kit, EQ, look and sticks" title="Customize"></button>
+    <aside id="kit-drawer" class="drawer" aria-label="Customize" inert></aside>
+    <aside id="learn-drawer" class="drawer" aria-label="Learn" inert></aside>
+    <aside id="help-drawer" class="drawer" aria-label="How it works" inert></aside>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

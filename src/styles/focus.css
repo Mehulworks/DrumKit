@@ -1,0 +1,53 @@
+/* Focus mode: everything but the drums is hidden and the kit takes the whole screen. A clearly visible round ✕ in the top-right
+   corner (clear of the drums) leaves it. */
+body.is-focus .topbar,
+body.is-focus .kit-tab,
+body.is-focus .credits,
+body.is-focus .recording-panel {
+  display: none !important;
+}
+
+body.is-focus .kit {
+  padding-top: max(var(--space-md), env(safe-area-inset-top));
+}
+
+.focus-exit {
+  position: fixed;
+  z-index: 20;
+  top: max(0.75rem, env(safe-area-inset-top));
+  right: max(0.75rem, env(safe-area-inset-right));
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: 2px solid var(--color-accent);
+  border-radius: 50%;
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: 0 4px 14px rgb(0 0 0 / 0.35);
+  cursor: pointer;
+}
+
+.focus-exit:hover,
+.focus-exit:focus-visible {
+  background: var(--color-surface-hover);
+}
+
+.focus-exit:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+body:not(.is-focus) .focus-exit {
+  display: none;
+}
+
+/* Focus mode's one-time tip lies over the drums: taps pass through it, except on its close button. */
+.coach-tip.is-passthrough {
+  pointer-events: none;
+}
+
+.coach-tip.is-passthrough .coach-close {
+  pointer-events: auto;
+}

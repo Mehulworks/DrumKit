@@ -1,0 +1,153 @@
+/* Recording panel buttons: Add layer, the round icon buttons, Play/Stop, Loop, help, fold and close, and the caret. */
+
+/* Buttons: Add layer is outlined in the accent colour as the main action; red while adding. */
+
+.panel-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  height: 2rem;
+  padding: 0 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 0.8125rem;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.panel-button:hover:not(:disabled) {
+  background: var(--color-surface-hover);
+}
+
+/* Round icon buttons: Play, Loop, Delete and help. */
+.panel-button.icon-only {
+  justify-content: center;
+  width: 2rem;
+  padding: 0;
+}
+
+/* Play/Stop: the main control, a filled saffron pill with its word; red while recording. */
+.play-button,
+.play-button:hover:not(:disabled) {
+  height: 2rem;
+  padding: 0 1rem 0 0.75rem;
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.play-button:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+/* Loop on: lettered in the accent colour. */
+
+.loop-button[aria-pressed="true"] {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.panel-button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* Download while the file is being made (a moment, longer for a long recording). */
+.panel-button.is-saving {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.layer-button {
+  border-color: var(--color-accent);
+}
+
+.layer-button .record-dot {
+  display: none;
+}
+
+.layer-button.is-recording,
+.layer-button.is-recording:hover:not(:disabled) {
+  border-color: var(--color-record);
+  background: var(--color-record);
+  color: #fff;
+}
+
+.layer-button.is-recording .record-dot {
+  display: block;
+  width: 0.5rem;
+  height: 0.5rem;
+  background: #fff;
+  animation: record-pulse 1s ease-in-out infinite;
+}
+
+.layer-button.is-recording svg {
+  display: none;
+}
+
+/* How layers work: a soft round "?" lettered in the accent colour. */
+.help-button {
+  border-color: transparent;
+  background: var(--color-surface-hover);
+  color: var(--color-accent);
+}
+
+/* Fold and close: small icon buttons at the end of the bar. */
+.panel-fold {
+  display: inline-flex;
+  padding: 0.25rem;
+  border: 0;
+  border-radius: 0.375rem;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.panel-fold svg {
+  transition: transform 0.2s ease;
+}
+
+.panel-close,
+.panel-empty-text {
+  display: none;
+}
+
+.panel-close { grid-area: close; }
+
+.panel-empty-text {
+  grid-area: empty;
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.panel-empty-text strong {
+  color: var(--color-text);
+}
+
+.panel-button:focus-visible,
+.panel-fold:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+
+/* The caret: a small triangle on the top edge, in the panel's own colour and border, pointing up at Rec. */
+.panel-caret {
+  position: absolute;
+  top: -0.4375rem;
+  left: var(--caret-x, 50%);
+  width: 0.75rem;
+  height: 0.75rem;
+  border-top: 1px solid var(--color-border);
+  border-left: 1px solid var(--color-border);
+  border-top-left-radius: 2px;
+  background: var(--color-surface);
+  pointer-events: none;
+  transform: translateX(-50%) rotate(45deg);
+}

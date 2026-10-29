@@ -1,0 +1,184 @@
+/* Concert mode: the venue and crowd behind the kit, the kit scaled down to the bottom, and the crowd's
+   moves (bobbing to the beat, hands up on a cheer, jumping when hyped), glow sticks, phone lights, a bouncing beach
+   ball, the disco ball's turning specks and roaming light pools.
+   Every movement stops for reduced motion. */
+body.is-concert .kit {
+  background: #0b0b0e;
+}
+
+/* The floor, the atmosphere and the soft stage light over the kit step aside: the venue has its own lights (and the
+   stage light's edges would show on the dark venue). */
+body.is-concert .kit-backdrop,
+body.is-concert .kit-atmosphere,
+body.is-concert .kit-light {
+  display: none;
+}
+
+body.is-concert .kit-svg {
+  position: relative;
+  z-index: 1;
+  transform: scale(0.74);
+  transform-origin: 50% 100%;
+}
+
+/* Phones: the kit shrinks less, so the drums stay big enough to tap; the crowd fills the space behind. */
+@media (max-height: 30em), (max-width: 35em) {
+  body.is-concert .kit-svg {
+    transform: scale(0.9);
+  }
+}
+
+.concert-scene {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.concert-scene * {
+  transform-box: view-box;
+}
+
+/* The crowd bobs once per beat; each fan starts at a slightly different moment. */
+.fan {
+  animation: fan-bob calc(var(--beat, 0.6s) / 2) ease-in-out var(--delay, 0s) infinite alternate;
+}
+
+@keyframes fan-bob {
+  to { transform: translateY(-3px); }
+}
+
+.arms {
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.cheer .fan:not(.fan-alt) .arms,
+.hype .arms {
+  opacity: 1;
+}
+
+/* Things in hands: glow sticks pulse, the beach ball bounces across the crowd, the disco ball's specks turn. */
+.glow-stick {
+  animation: glow-pulse 1.2s ease-in-out var(--delay, 0s) infinite alternate;
+}
+
+@keyframes glow-pulse {
+  from { opacity: 0.6; }
+  to { opacity: 1; }
+}
+
+.beach-ball {
+  animation: ball-bounce 16s ease-in-out infinite alternate;
+}
+
+@keyframes ball-bounce {
+  0% { transform: translate(160px, 130px) rotate(0deg); }
+  20% { transform: translate(430px, 70px) rotate(90deg); }
+  40% { transform: translate(720px, 150px) rotate(200deg); }
+  60% { transform: translate(990px, 60px) rotate(290deg); }
+  80% { transform: translate(1260px, 140px) rotate(380deg); }
+  100% { transform: translate(1480px, 90px) rotate(470deg); }
+}
+
+.disco-specks {
+  animation: disco-turn 40s linear infinite;
+}
+
+@keyframes disco-turn {
+  to { transform: rotate(360deg); }
+}
+
+/* Lights on the truss blink in a chase that follows the tempo; the disco ball's halo pulses on every beat. */
+/* Kept gentle on purpose: each lamp glows up and down over at least 2.4 seconds (4 beats), in turn, and the disco ball
+   halo over at least 1.6 seconds, so nothing blinks faster than once a second. */
+.lamp-halo {
+  animation: lamp-chase max(calc(var(--beat, 0.6s) * 4), 2.4s) ease-in-out calc(var(--i, 0) * 0.4s) infinite;
+}
+
+@keyframes lamp-chase {
+  0%, 100% { opacity: 0.08; }
+  40% { opacity: 0.4; }
+}
+
+.ball-halo {
+  animation: ball-pulse max(calc(var(--beat, 0.6s) * 2), 1.6s) ease-in-out infinite;
+}
+
+@keyframes ball-pulse {
+  0%, 100% { opacity: 0.05; }
+  50% { opacity: 0.22; }
+}
+
+/* Beams sway slowly, each at its own pace, like moving lights idling. */
+.beam {
+  animation: beam-sway var(--sway, 10s) ease-in-out var(--delay, 0s) infinite alternate;
+}
+
+@keyframes beam-sway {
+  from { transform: rotate(-9deg); }
+  to { transform: rotate(9deg); }
+}
+
+/* Flashing lights switched off in Settings: lights hold still (movement such as the crowd and beams carries on). */
+.no-flash .lamp-halo,
+.no-flash .ball-halo,
+.no-flash .ball-glint,
+.no-flash .phone,
+.no-flash .glow-stick {
+  animation: none;
+}
+
+.ball-glint {
+  animation: phone-glow 1.4s ease-in-out infinite alternate;
+}
+
+.hype .fan {
+  animation-name: fan-jump;
+  animation-duration: calc(var(--beat, 0.6s) / 4);
+}
+
+@keyframes fan-jump {
+  to { transform: translateY(-9px); }
+}
+
+.phone {
+  animation: phone-glow 1.6s ease-in-out var(--delay, 0s) infinite alternate;
+}
+
+@keyframes phone-glow {
+  from { opacity: 0.35; }
+  to { opacity: 1; }
+}
+
+.pool-0 { animation: pool-a 14s ease-in-out infinite alternate; }
+.pool-1 { animation: pool-b 17s ease-in-out infinite alternate; }
+.pool-2 { animation: pool-a 19s ease-in-out -4s infinite alternate-reverse; }
+.pool-3 { animation: pool-b 15s ease-in-out -6s infinite alternate-reverse; }
+
+@keyframes pool-a {
+  from { transform: translate(-160px, 40px); }
+  to { transform: translate(220px, -60px); }
+}
+
+@keyframes pool-b {
+  from { transform: translate(180px, -40px); }
+  to { transform: translate(-240px, 80px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .concert-scene * {
+    animation: none !important;
+  }
+}
+
+/* Upright screens: the crowd is a strip along the top (concert-mode.js sizes it and sets --crowd-h), and the kit is
+   centred in the space below it, zoomed in a little like the normal upright view. */
+@media (orientation: portrait) {
+  body.is-concert .kit-svg {
+    transform-origin: 50% 50%;
+    transform: translateY(calc(var(--crowd-h, 0px) / 2)) scale(1.14);
+  }
+}

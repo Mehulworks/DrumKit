@@ -1,0 +1,79 @@
+/* Settings inside the ⋮ menu: the switches, the Metronome and its tempo row, the dividers and Reset all. */
+
+/* Settings inside the menu: switches, the tempo stepper, dividers and Reset all. */
+.menu-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.menu-divider {
+  height: 1px;
+  margin: 0.25rem 0.375rem;
+  background: var(--color-border);
+}
+
+.menu-switch {
+  flex: none;
+  width: 2.125rem;
+  height: 1.25rem;
+  margin-left: auto;
+  border-radius: 999px;
+  background: radial-gradient(circle, #fff 6px, transparent 6.5px) left center / 20px 20px no-repeat, var(--color-text-muted);
+  transition: background-position 0.15s ease, background-color 0.15s ease;
+}
+
+.menu-toggle[aria-checked="true"] .menu-switch {
+  background-color: var(--color-accent);
+  background-position: right center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-switch {
+    transition: none;
+  }
+}
+
+.menu-tempo {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-height: 2.5rem;
+  padding: 0 0.25rem 0 0.625rem;
+  font-size: 0.875rem;
+}
+
+.menu-tempo svg {
+  width: 1.125rem;
+  height: 1.125rem;
+  color: var(--color-accent);
+}
+
+.menu-tempo .button-label {
+  margin-right: auto;
+}
+
+.more-menu .menu-step {
+  width: 2rem;
+  min-width: 2rem;
+  min-height: 2rem;
+  justify-content: center;
+  border-color: var(--color-border);
+  font-size: 1rem;
+}
+
+.menu-tempo-value {
+  min-width: 4.4em;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+
+/* The tempo row sits under the Metronome switch, indented like its label; greyed out while the metronome is off. */
+.menu-tempo-gap {
+  width: 1.125rem;
+}
+
+.menu-tempo.is-off {
+  opacity: 0.45;
+}

@@ -1,0 +1,63 @@
+/* Keyboard map in the guide: drum keys lit in the accent colour with the drum's name under the letter. */
+.kb {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.625rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+}
+
+.kb-row {
+  display: flex;
+  gap: 0.1875rem;
+}
+
+.kb-row > :first-child {
+  margin-left: calc(var(--indent, 0) * 4.5%);
+}
+
+.kb-key {
+  display: flex;
+  flex: 0 0 calc((100% - 27px) / 10);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 2.375rem;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-bottom-width: 2px;
+  border-radius: 0.3125rem;
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+}
+
+.kb-key b {
+  font-weight: 600;
+}
+
+.kb-key small {
+  max-width: 100%;
+  margin-top: 1px;
+  font-size: 0.5rem;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.kb-key.is-drum {
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 16%, var(--color-surface));
+  color: var(--color-text);
+}
+
+.kb-key.is-drum small {
+  color: var(--color-accent);
+}
+
+.kb-space .kb-key {
+  flex-basis: 50%;
+  margin: 0 auto;
+}
+

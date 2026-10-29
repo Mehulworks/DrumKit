@@ -1,0 +1,70 @@
+/* Learn scoreboard and cues: the scoreboard over the kit with its big count-in numbers, and the glow on the pad to hit. */
+
+/* The scoreboard over the top of the kit area, and the big count-in numbers in its middle. */
+.learn-hud {
+  position: fixed;
+  z-index: 6;
+  inset: 0;
+  pointer-events: none;
+}
+
+.learn-hud[hidden] {
+  display: none;
+}
+
+.hud-board {
+  position: absolute;
+  top: var(--top, 7.5rem);
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: 1.125rem;
+  padding: 0.5rem 1.125rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+  box-shadow: 0 6px 20px rgb(0 0 0 / 0.25);
+  translate: -50% 0;
+}
+
+.learn-hud.is-demo .hud-board {
+  display: none;
+}
+
+.hud-word {
+  min-width: 6.5em;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.hud-word[data-verdict="onTime"] { color: var(--color-good); }
+.hud-word[data-verdict="early"],
+.hud-word[data-verdict="late"] { color: var(--color-warn); }
+.hud-word[data-verdict="miss"] { color: var(--color-bad); }
+
+.hud-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.1;
+}
+
+.hud-stat b {
+  font-size: 1.375rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.hud-stat small {
+  color: var(--color-text-muted);
+  font-size: 0.6875rem;
+}
+
+
+/* On the kit: the soft saffron glow on the pad to hit. */
+.cue-glow {
+  fill: var(--color-accent);
+  pointer-events: none;
+}

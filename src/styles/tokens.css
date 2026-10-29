@@ -1,0 +1,77 @@
+/* Design tokens: colours, spacing, radius and fonts as CSS variables, for the dark theme (default) and the light theme.
+   Two fonts are stored in public/fonts with their licences (both SIL OFL 1.1): Outfit for body text and DM Serif
+   Display for the title and headings. System fonts stand in for any character they do not cover. */
+@font-face {
+  font-family: "Outfit";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/outfit-latin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "DM Serif Display";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/dm-serif-display-latin.woff2") format("woff2");
+}
+
+:root {
+  --color-scheme: dark;
+  --color-bg: #111214;
+  --color-stage: #1d1f24;
+  --color-surface: #1a1b1f;
+  --color-surface-hover: #24262b;
+  --color-border: #2e3036;
+  --color-text: #e8e8ea;
+  --color-text-muted: #9a9ca3;
+  --color-accent: #ffa62b; /* saffron */
+  --color-playback: #ffd75e; /* gold: hits of a recording playing back */
+  --color-accent-strong: #f28b0c; /* a full, bright saffron fill (main buttons) */
+  --color-on-accent: #1b1206; /* text and icons on any saffron fill, in both themes (about 10:1 dark, 4.8:1 light) */
+  --color-good: #3ddc84; /* on time, passed */
+  --color-warn: #ffb547; /* early or late */
+  --color-bad: #ff6b6b; /* missed */
+  --color-record: #e5484d;
+  /* Pad grid: tile and role colours (cymbal, tom, hi-hat, snare, kick). */
+  --grid-tile: #1d1f24;
+  --grid-tile-edge: #2e3036;
+  --grid-cymbal: #ffa62b;
+  --grid-tom: #4d8dff;
+  --grid-hat: #3ddc84;
+  --grid-snare: #ff4fd8;
+  --grid-kick: #e5484d;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --radius-md: 0.5rem;
+  --font-system: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-body: "Outfit", var(--font-system);
+  --font-display: "DM Serif Display", Georgia, "Times New Roman", serif;
+}
+
+:root[data-theme="light"] {
+  --color-scheme: light;
+  --color-bg: #f6f1e8; /* warm cream, to suit saffron */
+  --color-stage: #ebe3d6;
+  --color-surface: #fffdf9;
+  --color-surface-hover: #f3ece1;
+  --color-border: #e0d6c6;
+  --color-text: #1b1c1f;
+  --color-text-muted: #5f6168;
+  --color-accent: #c46a00; /* deeper saffron, readable on light */
+  --color-playback: #b8900f;
+  --color-accent-strong: #e07b00;
+  --color-good: #1a7f45; /* darker on light backgrounds, for at least 4.5:1 contrast */
+  --color-warn: #a85d00;
+  --color-bad: #c0392b;
+  --color-record: #d1343a;
+  --grid-tile: #fffdf9;
+  --grid-tile-edge: #e2d9cb;
+  --grid-cymbal: #c46a00;
+  --grid-tom: #2f6fd8;
+  --grid-hat: #1f9d5a;
+  --grid-snare: #c0359f;
+  --grid-kick: #d1343a;
+}

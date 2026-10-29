@@ -1,0 +1,175 @@
+/* Recording panel states: folded (one clickable line), the note after Delete, and the layouts for phones. */
+/* Folded: one slim line (title, status, chevron); the whole bar is a button that opens the panel again. */
+/* Play and Loop stay, so a folded recording can still be played. */
+.recording-panel.is-folded {
+  grid-template-columns: auto 1fr auto auto;
+  grid-template-areas: "info . play fold";
+  cursor: pointer;
+}
+
+.recording-panel.is-folded:hover {
+  background: var(--color-surface-hover);
+}
+
+.recording-panel.is-folded .panel-timeline,
+.recording-panel.is-folded .panel-footer,
+.recording-panel.is-folded .save-button,
+.recording-panel.is-folded .delete-button,
+.recording-panel.is-folded .help-button {
+  display: none;
+}
+
+.recording-panel.is-folded {
+  padding-block: 0.375rem;
+}
+
+.recording-panel.is-folded .panel-info {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-md);
+  min-width: 0;
+}
+
+.recording-panel.is-folded .panel-meta {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.recording-panel.is-folded .panel-fold svg {
+  transform: rotate(-90deg);
+}
+
+/* After Delete: a short note, the How layers work button and a close button. */
+.recording-panel.is-empty {
+  grid-template-columns: 1fr auto auto;
+  grid-template-areas: "empty help close";
+}
+
+.recording-panel.is-empty .panel-info,
+.recording-panel.is-empty .panel-playback,
+.recording-panel.is-empty .save-button,
+.recording-panel.is-empty .delete-button,
+.recording-panel.is-empty .panel-timeline,
+.recording-panel.is-empty .panel-footer,
+.recording-panel.is-empty .panel-fold:not(.panel-close) {
+  display: none;
+}
+
+.recording-panel.is-empty .panel-empty-text {
+  display: block;
+}
+
+.recording-panel.is-empty .panel-close {
+  display: inline-flex;
+}
+
+/* Smaller screens: tighter spacing and slightly smaller buttons. */
+@media (max-width: 45em), (max-height: 30em) {
+  .recording-panel {
+    gap: var(--space-sm);
+    margin-bottom: var(--space-sm);
+    padding: 0.375rem 0.375rem var(--space-sm) var(--space-sm);
+  }
+
+  .panel-button {
+    padding: 0 0.5625rem;
+  }
+
+  .play-button,
+  .play-button:hover:not(:disabled) {
+    padding: 0 0.875rem 0 0.6875rem;
+  }
+}
+
+/* Phones: Undo becomes an icon (Add layer keeps its words, as the main action). */
+@media (max-width: 35em), (max-height: 30em) {
+  [data-panel="undo"] .panel-button-text {
+    display: none;
+  }
+}
+
+/* Upright phones: title and fold, then the player with Delete and help, the timeline, then the footer. */
+@media (max-width: 35em) {
+  .recording-panel {
+    grid-template-columns: 1fr auto auto auto;
+    grid-template-areas:
+      "info info info fold"
+      "play save delete help"
+      "timeline timeline timeline timeline"
+      "footer footer footer footer";
+  }
+
+  .recording-panel.is-folded {
+    grid-template-columns: 1fr auto auto;
+    grid-template-areas: "info play fold";
+  }
+
+  .recording-panel.is-empty {
+    grid-template-areas: "empty close" "help help";
+  }
+
+  .help-button {
+    justify-self: end;
+  }
+
+  .recording-panel.is-empty .help-button {
+    justify-self: start;
+  }
+}
+
+
+/* Short screens (phones held sideways): the title and layer count share a line, and Add layer (with its name) and Undo
+   sit on their own line under the layers, as on bigger screens. */
+@media (max-height: 30em) {
+  .recording-panel {
+    grid-template-areas:
+      "info . play save delete help fold"
+      "timeline timeline timeline timeline timeline timeline timeline"
+      "footer footer footer footer footer footer footer";
+  }
+
+  /* The title may shrink; while recording, the status line steps aside (Rec in the toolbar shows the timer). */
+  .panel-info {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .recording-panel.is-rec-live .panel-meta {
+    display: none;
+  }
+
+  /* No room for words here: Play/Stop is a round icon button. */
+  .play-button .panel-button-text {
+    display: none;
+  }
+
+  .play-button,
+  .play-button:hover:not(:disabled) {
+    width: 2.125rem;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .panel-footer {
+    justify-content: flex-end;
+  }
+
+  .panel-info {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-sm);
+  }
+
+  .recording-title {
+    font-size: 0.9375rem;
+  }
+
+  .panel-meta {
+    margin: 0;
+  }
+
+  .recording-panel {
+    row-gap: 0.25rem;
+  }
+}

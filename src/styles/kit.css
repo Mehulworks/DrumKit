@@ -1,0 +1,120 @@
+/* Kit area: fills the space under the title, scales the kit to fit, moving parts, effects, the recording glow and hit areas. */
+.kit {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden; /* the background reaches past the drawing; it stops at the kit area's edges */
+  padding: 0 max(var(--space-md), env(safe-area-inset-right)) var(--space-sm)
+    max(var(--space-md), env(safe-area-inset-left));
+  background: radial-gradient(ellipse at 50% 55%, var(--color-stage), transparent 70%);
+}
+
+.kit-svg {
+  display: block;
+  overflow: visible; /* lets the background fill the whole kit area, not just the drawing's box */
+  width: 100%;
+  height: 100%;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Each piece, the kick beater and the hi-hat top move around their own centre (see motion.js). */
+.pad-art,
+.kick-beater,
+.hihat-top,
+.effect-ring {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.floor-ring {
+  color: var(--color-text-muted);
+}
+
+.kit-effects,
+.kit-gear,
+.kit-backdrop {
+  pointer-events: none;
+}
+
+/* Soft stage light over the kit; it brightens a little on each metronome beat (--beat-glow, 0 to 1).
+   Fainter in the light theme. */
+.kit-light {
+  pointer-events: none;
+  opacity: calc(0.7 + var(--beat-glow, 0) * 0.8);
+}
+
+:root[data-theme="light"] .kit-light {
+  opacity: calc((0.7 + var(--beat-glow, 0) * 0.8) * 0.4);
+}
+
+/* While recording (or adding a layer): a softly pulsing red line along the top of the kit. */
+.kit::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: max(var(--space-md), env(safe-area-inset-right));
+  left: max(var(--space-md), env(safe-area-inset-left));
+  height: 0.1875rem;
+  border-radius: 2px;
+  background: var(--color-record);
+  box-shadow: 0 0 18px 2px var(--color-record);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.kit.is-recording::before {
+  opacity: 1;
+  animation: recording-glow 1.6s ease-in-out infinite;
+}
+
+@keyframes recording-glow {
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kit.is-recording::before {
+    animation: none;
+  }
+}
+
+/* Key names on the pads: hidden unless "Show keys" is on; never block a hit. */
+.kit-labels {
+  display: none;
+  pointer-events: none;
+}
+
+.kit-svg.show-keys .kit-labels {
+  display: inline;
+}
+
+.key-label rect {
+  fill: rgb(0 0 0 / 0.55);
+}
+
+.key-label text {
+  fill: #fff;
+  font: 600 22px var(--font-system);
+}
+
+/* Invisible but clickable; a fill only shows during the hit glow (white live, gold on playback). */
+.hit-area {
+  fill: #fff;
+  fill-opacity: 0;
+  pointer-events: all;
+  cursor: pointer;
+  outline: none;
+}
+
+/* Upright screens: the kit is wider than tall, so the screen width limits it. Zoom in a little on the drums (only the
+   floor at the edges is cropped; every drum stays in view). */
+@media (orientation: portrait) {
+  .kit-svg {
+    transform: scale(1.14);
+  }
+}

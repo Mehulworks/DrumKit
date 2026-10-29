@@ -1,0 +1,53 @@
+/* Phones held sideways (at least 680px wide): the recording panel is a column on the right, beside the kit, instead of a
+   bar above it. The kit area is wide and short there, so the column uses empty space and the kit keeps its full height.
+   Only while the panel is open (not folded, not the note after Delete). */
+@media (max-height: 30em) and (min-width: 42.5em) {
+  body:has(#recording-panel:not([hidden]):not(.is-folded):not(.is-empty)) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 12.5rem;
+    grid-template-rows: auto auto minmax(0, 1fr);
+  }
+
+  body:has(#recording-panel:not([hidden]):not(.is-folded):not(.is-empty)) > .topbar,
+  body:has(#recording-panel:not([hidden]):not(.is-folded):not(.is-empty)) > #learn-panel {
+    grid-column: 1 / -1;
+  }
+
+  body:has(#recording-panel:not([hidden]):not(.is-folded):not(.is-empty)) > #kit {
+    grid-row: 3;
+    grid-column: 1;
+  }
+
+  body:has(#recording-panel:not([hidden]):not(.is-folded):not(.is-empty)) > #recording-panel {
+    grid-row: 3;
+    grid-column: 2;
+    grid-template-columns: minmax(0, 1fr) auto auto auto auto;
+    grid-template-areas:
+      "info info info info fold"
+      "play play save delete help"
+      "timeline timeline timeline timeline timeline"
+      "footer footer footer footer footer";
+    align-content: start;
+    margin: 0 max(var(--space-sm), env(safe-area-inset-right)) var(--space-sm) 0;
+    overflow: hidden auto; /* scrolls down if needed, never sideways (the invisible tap rings may reach past its edge) */
+  }
+
+  /* Title above the layer count; no caret (the panel is beside the kit, not under Rec) and no play time (the moving
+     line shows the position). */
+  body:has(#recording-panel:not([hidden]):not(.is-folded):not(.is-empty)) .panel-info {
+    display: block;
+  }
+
+  body:has(#recording-panel:not([hidden]):not(.is-folded):not(.is-empty)) .panel-meta {
+    margin-top: 2px;
+  }
+
+  body:has(#recording-panel:not([hidden]):not(.is-folded):not(.is-empty)) .panel-caret,
+  body:has(#recording-panel:not([hidden]):not(.is-folded):not(.is-empty)) .panel-time {
+    display: none;
+  }
+
+  body:has(#recording-panel:not([hidden]):not(.is-folded):not(.is-empty)) .panel-playback {
+    justify-content: flex-start;
+  }
+}

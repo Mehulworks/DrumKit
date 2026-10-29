@@ -1,0 +1,156 @@
+/* Learn: the lesson bar under the toolbar (it borrows the recording panel's look) with its beat grid, the scoreboard
+   over the kit and the glow on the pad to hit. */
+.learn-panel {
+  grid-template-columns: minmax(0, 15rem) minmax(0, 1fr) auto auto;
+  grid-template-areas: "info grid actions fold";
+}
+
+.learn-info {
+  grid-area: info;
+  min-width: 0;
+}
+
+.learn-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  white-space: nowrap;
+}
+
+.learn-meta {
+  margin: 2px 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.learn-actions {
+  grid-area: actions;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.learn-speed-value {
+  min-width: 3.2em;
+  text-align: center;
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.learn-next[hidden] {
+  display: none;
+}
+
+/* While a lesson runs, Focus mode keeps the lesson bar (it hides the other panels). */
+body.is-focus .learn-panel:not([hidden]) {
+  display: grid !important;
+}
+
+/* The beat grid: drum names on the left, one cell per step, a dot where to hit, and the sweeping line. */
+.beat-grid {
+  --name: 3.6rem;
+  --lead: 0px; /* the READY strip is gone; the count-in shows in the info line and on the kit */
+  position: relative;
+  grid-area: grid;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.grid-row {
+  display: grid;
+  grid-template-columns: var(--name) var(--lead) repeat(var(--steps), minmax(0, 1fr));
+  align-items: center;
+  gap: 2px;
+}
+
+.grid-name {
+  color: var(--color-text-muted);
+  font-size: 0.6875rem;
+  white-space: nowrap;
+}
+
+.grid-count {
+  color: var(--color-text-muted);
+  font-size: 0.625rem;
+  text-align: center;
+}
+
+.grid-count.is-beat {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.grid-cell {
+  display: grid;
+  place-items: center;
+  height: 0.9375rem;
+  border-radius: 0.1875rem;
+  background: color-mix(in srgb, var(--color-text) 5%, transparent);
+}
+
+.grid-cell.is-beat {
+  background: color-mix(in srgb, var(--color-text) 10%, transparent);
+}
+
+.grid-cell i {
+  width: 0.5625rem;
+  height: 0.5625rem;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+
+.grid-cell[data-verdict="onTime"] i { background: var(--color-good); }
+.grid-cell[data-verdict="early"] i,
+.grid-cell[data-verdict="late"] i { background: var(--color-warn); }
+.grid-cell[data-verdict="miss"] i { background: var(--color-bad); }
+
+.grid-playhead {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--name) + 2px + (var(--lead) + 2px) * var(--lead-in, 0) + (100% - var(--name) - var(--lead) - 0.25rem) * var(--progress, 0));
+  width: 2px;
+  border-radius: 1px;
+  background: var(--color-text);
+  pointer-events: none;
+}
+
+.grid-lead {
+  height: 0.9375rem;
+  border-radius: 0.1875rem;
+  /* Fills with green from the left during the count-in. */
+  background: linear-gradient(90deg, var(--color-good) calc(var(--lead-fill, 0) * 100%), color-mix(in srgb, var(--color-text) 16%, transparent) 0);
+}
+
+.grid-lead-label {
+  color: var(--color-text-muted);
+  font-size: 0.625rem;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* During the count-in the Ready box counts down: 4, 3, 2, 1. */
+.grid-lead-label.is-counting {
+  color: var(--color-accent);
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  line-height: 0.7;
+  letter-spacing: 0;
+}
+
+
+.grid-lead,
+.grid-lead-label {
+  display: none;
+}
+
+@media (max-width: 35em), (max-width: 60em) and (max-height: 30em) {
+  .beat-grid {
+    --name: 2.75rem;
+  }
+}

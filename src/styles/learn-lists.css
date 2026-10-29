@@ -1,0 +1,90 @@
+/* Learn drawer: the lists of lessons and style beats. */
+
+.lesson-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.lesson-list[hidden] {
+  display: none;
+}
+
+.lesson-item {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.625rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.lesson-item:hover {
+  border-color: color-mix(in srgb, var(--color-accent) 45%, var(--color-border));
+  background: var(--color-surface-hover);
+}
+
+.lesson-item:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.lesson-number {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-accent) 18%, var(--color-surface));
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.lesson-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.lesson-name {
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.lesson-tip {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+}
+
+.lesson-side {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  font-size: 0.6875rem;
+}
+
+.lesson-level {
+  color: var(--color-accent);
+  letter-spacing: 1px;
+}
+
+.lesson-bpm {
+  color: var(--color-text-muted);
+}
+
+.lesson-best {
+  color: var(--color-text-muted);
+}
+
+.lesson-best.is-passed {
+  color: var(--color-good);
+}

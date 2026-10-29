@@ -1,0 +1,204 @@
+/* Recording timeline: a label and a track per layer, ticks for each hit, the playback line, and the highlighted row being recorded. */
+.panel-timeline {
+  --label-width: 6.5rem;
+  position: relative;
+  min-width: 0;
+}
+
+.timeline-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.timeline-row {
+  display: grid;
+  grid-template-columns: var(--label-width) 1fr;
+  align-items: center;
+}
+
+.label-short {
+  display: none;
+}
+
+.row-label {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.row-track {
+  position: relative;
+  height: 1.375rem;
+  border-radius: 0.25rem;
+  background: var(--color-bg);
+  box-shadow: inset 0 0 0 1px var(--color-border);
+}
+
+.row-track i {
+  position: absolute;
+  transition: left 0.4s ease; /* marks glide when the time scale changes (timeline-glide.js) */
+  top: 0.25rem;
+  bottom: 0.25rem;
+  width: 0.3125rem;
+  margin-left: -0.1563rem;
+  border-radius: 2px;
+  background: var(--row-color);
+}
+
+.row-0 { --row-color: var(--color-text-muted); }
+.row-1 { --row-color: var(--color-accent); }
+.row-2 { --row-color: var(--color-text); }
+.row-3 { --row-color: var(--color-record); }
+
+/* The layer being recorded: a red-tinted, outlined track and a pulsing red dot by its label. Click it to stop. */
+.timeline-row.is-recording-row {
+  cursor: pointer;
+}
+
+.is-recording-row .row-track {
+  background: color-mix(in srgb, var(--color-record) 16%, var(--color-bg));
+  box-shadow: inset 0 0 0 1px var(--color-record);
+}
+
+/* The empty row being recorded is a little taller and says what to do until the first hit. */
+.is-recording-row .row-track {
+  height: 1.5rem;
+}
+
+.row-hint {
+  position: absolute;
+  inset: 0 0.5rem;
+  overflow: hidden;
+  color: var(--color-record);
+  font-size: 0.8125rem;
+  line-height: 1.5rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  animation: hint-in 0.3s ease-out;
+}
+
+@keyframes hint-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.is-recording-row .row-label {
+  color: var(--color-record);
+  font-weight: 600;
+}
+
+.is-recording-row .row-label::before {
+  content: "";
+  display: inline-block;
+  width: 0.375rem;
+  height: 0.375rem;
+  margin-right: 0.25rem;
+  border-radius: 50%;
+  background: var(--color-record);
+  vertical-align: 1px;
+  animation: record-pulse 1s ease-in-out infinite;
+}
+
+.timeline-playhead {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  left: calc(var(--label-width) + (100% - var(--label-width)) * var(--position, 0));
+  display: none;
+  width: 2px;
+  border-radius: 1px;
+  background: var(--color-text);
+  pointer-events: none;
+}
+
+.recording-panel.is-playing .timeline-playhead {
+  display: block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .is-recording-row .row-label::before {
+    animation: none;
+  }
+}
+
+/* Smaller screens: thinner rows with short labels (Take, L1, L2, L3), so the kit keeps its room. */
+@media (max-width: 45em), (max-height: 30em) {
+  .panel-timeline {
+    --label-width: 3rem;
+  }
+
+  /* The full name stays for screen readers; the short one is what shows. */
+  .label-long {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .label-short {
+    display: inline;
+  }
+
+  .row-label {
+    font-size: 0.8125rem;
+  }
+
+  /* No room for the hint here; the status line says "play now" instead. */
+  .row-hint {
+    display: none;
+  }
+
+  .timeline-rows {
+    gap: 0.3125rem;
+  }
+
+  .row-track {
+    height: 0.875rem;
+  }
+
+  .is-recording-row .row-track {
+    height: 1rem;
+  }
+
+  .row-track i {
+    top: 2px;
+    bottom: 2px;
+    width: 0.25rem;
+    margin-left: -2px;
+  }
+}
+
+/* Short screens: the thinnest rows that still read clearly. */
+@media (max-height: 30em) {
+  .timeline-rows {
+    gap: 0.1875rem;
+  }
+
+  .row-track {
+    height: 0.6875rem;
+  }
+
+  .is-recording-row .row-track {
+    height: 0.8125rem;
+  }
+
+  .row-label {
+    font-size: 0.75rem;
+    line-height: 1;
+  }
+
+  .row-track i {
+    top: 1px;
+    bottom: 1px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row-track i {
+    transition: none;
+  }
+}

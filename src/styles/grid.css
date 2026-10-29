@@ -1,0 +1,86 @@
+/* Pad grid view (colours in tokens.css): minimal tiles (no floor, stands or theme art), each with a faint glow of its
+   role's colour in one corner, a line drawing of the instrument, a short colour bar and its name; the key label sits in
+   the bottom-right corner when "Show keys" is on. */
+.pad-tile {
+  fill: var(--grid-tile);
+  stroke: var(--grid-tile-edge);
+  stroke-width: 2;
+}
+
+.pad-tile-bar {
+  opacity: 0.85;
+}
+
+[data-role="cymbal"] { --role: var(--grid-cymbal); }
+[data-role="tom"] { --role: var(--grid-tom); }
+[data-role="hat"] { --role: var(--grid-hat); }
+[data-role="snare"] { --role: var(--grid-snare); }
+[data-role="kick"] { --role: var(--grid-kick); }
+
+.pad-tile-bar {
+  fill: var(--role);
+}
+
+.pad-tile-name {
+  fill: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 30px; /* drawing units, scaled with the grid */
+  font-weight: 600;
+}
+
+/* The grid fills its area as drawn: no zoom on upright screens. */
+@media (orientation: portrait) {
+  .kit-svg.is-grid {
+    transform: none;
+  }
+}
+
+/* Concert: the grid shrinks to the bottom so the crowd stays in view above it, and the tiles turn a little see-through so
+   the stage lights glow through them (names, drawings and keys stay solid). */
+body.is-concert .kit-svg.is-grid {
+  transform-origin: 50% 100%;
+  transform: translateY(-1.75rem) scale(0.62); /* lifted a little, so the credit sits below the tiles */
+}
+
+/* Upright screens: the crowd is only a short strip at the top, so the grid stays bigger. */
+@media (orientation: portrait) {
+  body.is-concert .kit-svg.is-grid {
+    transform: translateY(-1.75rem) scale(0.84);
+  }
+}
+
+body.is-concert .pad-tile {
+  fill-opacity: 0.7;
+}
+
+/* The instrument's line drawing, in its role's colour, kept soft so the name still leads. */
+.pad-tile-icon {
+  fill: none;
+  stroke: var(--role);
+  stroke-width: 5;
+  stroke-linecap: round;
+  opacity: 0.6;
+}
+
+.pad-tile-icon .faint {
+  opacity: 0.5;
+}
+
+.pad-tile-icon .solid {
+  fill: var(--role);
+  stroke: none;
+}
+
+/* A faint glow of the role's colour from the top-left corner, so the tiles feel less flat. */
+.pad-glow-stop {
+  stop-color: var(--role);
+  stop-opacity: 0.09;
+}
+
+.pad-glow-stop.pad-glow-end {
+  stop-opacity: 0;
+}
+
+.pad-tile-glow {
+  pointer-events: none;
+}

@@ -1,0 +1,105 @@
+/* Recording panel: the bar under the toolbar. Top row: title, Play / Loop / time, Delete, help and fold. Then the
+   full-width timeline, and under it Download (left) with Add layer / Undo (right). */
+.recording-panel {
+  display: grid;
+  position: relative;
+  grid-template-columns: auto 1fr auto auto auto auto auto;
+  grid-template-areas:
+    "info . play save delete help fold"
+    "timeline timeline timeline timeline timeline timeline timeline"
+    "footer footer footer footer footer footer footer";
+  align-items: center;
+  gap: var(--space-sm) var(--space-md);
+  margin: 0 max(var(--space-md), env(safe-area-inset-right)) var(--space-md) max(var(--space-md), env(safe-area-inset-left));
+  padding: var(--space-sm) var(--space-sm) var(--space-md) var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.recording-panel[hidden] {
+  display: none;
+}
+
+/* The panel slides down softly when it appears. */
+.recording-panel {
+  animation: panel-in 0.25s ease-out;
+}
+
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .recording-panel {
+    animation: none;
+  }
+}
+
+.panel-info { grid-area: info; }
+.panel-playback { grid-area: play; }
+.save-button { grid-area: save; }
+.delete-button { grid-area: delete; }
+.help-button { grid-area: help; }
+.panel-timeline { grid-area: timeline; }
+.panel-footer { grid-area: footer; }
+.panel-fold { grid-area: fold; }
+
+.recording-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.panel-meta {
+  margin: 2px 0 0;
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+/* The play time, Loop and the big Play/Stop, together like a small player on the right. */
+.panel-playback {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.625rem;
+}
+
+/* Empty while recording (the timer is in the status line and on Rec), so it takes no room then. */
+.panel-time:empty {
+  display: none;
+}
+
+.panel-time {
+  min-width: 5.5em;
+  padding-right: 2px;
+  text-align: right;
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+/* Under the layers: the layer actions, on the right. */
+.panel-footer,
+.panel-layer-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.panel-footer {
+  justify-content: flex-end;
+}
+
+/* Download and Delete act on the whole recording: a small gap sets them apart from the player. */
+.save-button {
+  margin-left: var(--space-sm);
+}

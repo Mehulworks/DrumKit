@@ -1,0 +1,28 @@
+/* Empty layer rows: dashed tracks waiting for a layer (the panel keeps every row, so it never grows); the next one
+   says "Tap to add a layer" and starts one when tapped. */
+.is-empty-row .row-label {
+  opacity: 0.5;
+}
+
+.is-empty-row .row-track {
+  background: transparent;
+  box-shadow: none;
+  outline: 1px dashed var(--color-border);
+  outline-offset: -1px;
+}
+
+.is-next-row {
+  cursor: pointer;
+}
+
+.is-next-row .row-label {
+  opacity: 0.8;
+}
+
+.is-next-row:hover .row-track {
+  background: var(--color-surface-hover);
+}
+
+.is-next-row .row-hint {
+  color: var(--color-text-muted);
+}

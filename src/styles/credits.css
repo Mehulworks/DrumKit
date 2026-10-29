@@ -1,0 +1,98 @@
+/* Credit: one small, quiet line floating over the bottom-right corner of the kit (no strip, so the drums keep the
+   height): white text on a faint dark backing, so it reads over any floor. It takes clicks, so its text can be selected
+   and copied and no drum plays under it. Hidden on short screens (a phone held sideways), where the ⋮ menu and the
+   guide's About have it. */
+.credits {
+  position: fixed;
+  z-index: 5;
+  right: max(0.75rem, env(safe-area-inset-right));
+  bottom: max(0.5rem, env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  background: rgb(0 0 0 / 0.3); /* 10% was too faint on the light floors */
+  color: rgb(255 255 255 / 0.6); /* the words step back; the name stays bright */
+  font-size: 0.75rem;
+  user-select: text;
+  -webkit-user-select: text;
+  cursor: auto;
+}
+
+.credits-link,
+.about-link {
+  color: var(--color-accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.credits-link:hover,
+.about-link:hover {
+  text-decoration: underline;
+}
+
+.credits-link:focus-visible,
+.about-link:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 0.25rem;
+}
+
+@media (max-height: 30em) {
+  .credits {
+    display: none;
+  }
+}
+
+/* The same line at the end of the ⋮ menu: a divider with a music note in the middle, then light, small text. */
+.menu-note-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.875rem 0.375rem 0.5rem;
+  color: var(--color-text-muted);
+}
+
+.menu-note-divider::before,
+.menu-note-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.menu-note-divider svg {
+  width: 0.8125rem;
+  height: 0.8125rem;
+  opacity: 0.8;
+}
+
+.menu-credit-line {
+  margin: 0;
+  padding: 0 2px 0.75rem;
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+  text-align: center;
+  white-space: nowrap;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.menu-credit-link {
+  color: var(--color-accent);
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 0.25rem;
+}
+
+.menu-credit-link:hover {
+  text-decoration: underline;
+}
+
+.menu-credit-link:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+

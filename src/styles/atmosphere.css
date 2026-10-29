@@ -1,0 +1,123 @@
+/* Atmosphere layer: sits exactly over the kit drawing (same box and scale), never takes clicks, and animates gently.
+   Every movement stops for people who ask for reduced motion. */
+.kit-atmosphere {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  padding: inherit;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.kit-atmosphere * {
+  transform-box: view-box;
+}
+
+.window-light {
+  animation: window-drift 26s ease-in-out infinite alternate;
+}
+
+@keyframes window-drift {
+  from { transform: translateX(-80px); }
+  to { transform: translateX(220px); }
+}
+
+.light-sweep {
+  animation: light-sweep 16s linear infinite;
+}
+
+@keyframes light-sweep {
+  0% { transform: translateX(0); }
+  55%, 100% { transform: translateX(2600px); }
+}
+
+.lamp-glow {
+  animation: lamp-breathe 7s ease-in-out infinite alternate;
+}
+
+@keyframes lamp-breathe {
+  from { opacity: 0.65; }
+  to { opacity: 1; }
+}
+
+.mote {
+  opacity: 0;
+  animation: mote-rise var(--dur, 10s) linear var(--delay, 0s) infinite;
+}
+
+@keyframes mote-rise {
+  0% { transform: translate(0, 0); opacity: 0; }
+  15% { opacity: 0.7; }
+  85% { opacity: 0.7; }
+  100% { transform: translate(var(--dx, 0), -280px); opacity: 0; }
+}
+
+/* Moving props: the amp's power light, mug steam, swaying plants, a spinning record, footlights and stage haze. */
+.led-blink {
+  animation: led-blink 2.4s ease-in-out infinite;
+}
+
+@keyframes led-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.steam {
+  opacity: 0;
+  animation: steam-rise 3.3s ease-out var(--delay, 0s) infinite;
+}
+
+@keyframes steam-rise {
+  0% { transform: translateY(0); opacity: 0; }
+  30% { opacity: 0.28; }
+  100% { transform: translateY(-46px); opacity: 0; }
+}
+
+.sway {
+  animation: sway 6s ease-in-out infinite alternate;
+}
+
+@keyframes sway {
+  from { transform: rotate(-3deg); }
+  to { transform: rotate(3deg); }
+}
+
+.spin {
+  animation: spin 1.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.foot-glow {
+  animation: lamp-breathe 4s ease-in-out infinite alternate;
+}
+
+.haze {
+  animation: haze-drift 22s ease-in-out var(--delay, 0s) infinite alternate;
+}
+
+@keyframes haze-drift {
+  from { transform: translateX(-120px); }
+  to { transform: translateX(140px); }
+}
+
+/* Flashing lights switched off in Settings: the amp light, footlights and lamp glow hold still. */
+.no-flash .led-blink,
+.no-flash .foot-glow,
+.no-flash .lamp-glow {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kit-atmosphere * {
+    animation: none !important;
+  }
+
+  .mote {
+    opacity: 0.5;
+  }
+}
