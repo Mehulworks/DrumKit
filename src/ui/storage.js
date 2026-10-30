@@ -11,6 +11,7 @@ export const DEFAULTS = {
   volume: 80, // below full, so the intro sound does not startle
   tempo: 100,
   showKeys: hasKeyboard,
+  showNames: true, // instrument names on the Pad grid tiles
   showSticks: true,
   flashLights: true,
   kit: 'acoustic',

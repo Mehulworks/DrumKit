@@ -43,7 +43,7 @@
   width: 0.3125rem;
   margin-left: -0.1563rem;
   border-radius: 2px;
-  background: var(--row-color);
+  background: var(--role, var(--row-color)); /* the instrument family's colour (grid.css), so the row shows what was played */
 }
 
 .row-0 { --row-color: var(--color-text-muted); }

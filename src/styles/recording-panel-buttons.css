@@ -1,6 +1,6 @@
 /* Recording panel buttons: Add layer, the round icon buttons, Play/Stop, Loop, help, fold and close, and the caret. */
 
-/* Buttons: Add layer is outlined in the accent colour as the main action; red while adding. */
+/* Buttons: Add layer is outlined in the accent colour as the main action; Stop beside it turns red while recording. */
 
 .panel-button {
   display: inline-flex;
@@ -67,27 +67,18 @@
   border-color: var(--color-accent);
 }
 
-.layer-button .record-dot {
-  display: none;
-}
-
-.layer-button.is-recording,
-.layer-button.is-recording:hover:not(:disabled) {
-  border-color: var(--color-record);
-  background: var(--color-record);
+/* Stop, left of Add layer: filled red with white words while something is recording; greyed otherwise. */
+.stop-button:not(:disabled),
+.stop-button:hover:not(:disabled) {
+  border-color: var(--color-record-fill);
+  background: var(--color-record-fill);
   color: #fff;
+  font-weight: 600;
 }
 
-.layer-button.is-recording .record-dot {
-  display: block;
-  width: 0.5rem;
-  height: 0.5rem;
-  background: #fff;
-  animation: record-pulse 1s ease-in-out infinite;
-}
-
-.layer-button.is-recording svg {
-  display: none;
+/* The stop square and the plus sit inside empty space in their icons, so the left side gets less padding to look even. */
+#recording-panel :is(.stop-button, .layer-button) {
+  padding: 0 0.875rem 0 0.5625rem;
 }
 
 /* How layers work: a soft round "?" lettered in the accent colour. */
@@ -110,6 +101,25 @@
 
 .panel-fold svg {
   transition: transform 0.2s ease;
+}
+
+/* Folded, the button says what it opens. */
+.panel-fold-text {
+  display: none;
+  margin-right: 0.125rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.recording-panel.is-folded .panel-fold {
+  align-items: center;
+  padding-inline: 0.5rem 0.25rem;
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+}
+
+.recording-panel.is-folded .panel-fold-text {
+  display: inline;
 }
 
 .panel-close,
@@ -150,4 +160,9 @@
   background: var(--color-surface);
   pointer-events: none;
   transform: translateX(-50%) rotate(45deg);
+}
+
+.panel-empty-text .coach-link {
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
 }

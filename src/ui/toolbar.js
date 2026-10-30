@@ -11,8 +11,10 @@ function applyTheme(button, theme) {
 }
 
 function setupModeSwitch(group) {
+  // Touch screens have no hover: there the same mode is "Drag", a sliding finger playing each pad it crosses.
+  const touch = matchMedia('(hover: none)').matches;
   group.innerHTML = MODES.map(({ id, label }) =>
-    `<button type="button" data-mode="${id}" aria-pressed="${id === getMode()}">${label}</button>`).join('');
+    `<button type="button" data-mode="${id}" aria-pressed="${id === getMode()}">${id === 'hover' && touch ? 'Drag' : label}</button>`).join('');
   group.addEventListener('click', (event) => {
     const choice = event.target.closest('[data-mode]');
     if (!choice) return;

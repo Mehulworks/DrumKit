@@ -1,10 +1,11 @@
 /* Pad grid view (colours in tokens.css): minimal tiles (no floor, stands or theme art), each with a faint glow of its
    role's colour in one corner, a line drawing of the instrument, a short colour bar and its name; the key label sits in
    the bottom-right corner when "Show keys" is on. */
+/* The border takes the role's colour, so each family is marked by more than a faint glow, and it reaches at least 3:1
+   against the page in both themes (WCAG 1.4.11); its width is set in screen pixels in grid-pad.js. */
 .pad-tile {
   fill: var(--grid-tile);
-  stroke: var(--grid-tile-edge);
-  stroke-width: 2;
+  stroke: color-mix(in srgb, var(--role) var(--grid-edge-mix), var(--grid-tile-edge));
 }
 
 .pad-tile-bar {
@@ -21,6 +22,10 @@
   fill: var(--role);
 }
 
+.kit-svg.hide-names .pad-tile-name {
+  display: none;
+}
+
 .pad-tile-name {
   fill: var(--color-text);
   font-family: var(--font-body);
@@ -34,18 +39,10 @@
   }
 }
 
-/* Concert: the grid shrinks to the bottom so the crowd stays in view above it, and the tiles turn a little see-through so
-   the stage lights glow through them (names, drawings and keys stay solid). */
+/* Concert: the grid is laid out in the space below the lights (grid-layout.js, told by concert-mode.js), so it is not
+   shrunk; the tiles turn a little see-through so the stage lights glow through them (names, drawings and keys stay solid). */
 body.is-concert .kit-svg.is-grid {
-  transform-origin: 50% 100%;
-  transform: translateY(-1.75rem) scale(0.62); /* lifted a little, so the credit sits below the tiles */
-}
-
-/* Upright screens: the crowd is only a short strip at the top, so the grid stays bigger. */
-@media (orientation: portrait) {
-  body.is-concert .kit-svg.is-grid {
-    transform: translateY(-1.75rem) scale(0.84);
-  }
+  transform: none;
 }
 
 body.is-concert .pad-tile {

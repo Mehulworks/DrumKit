@@ -29,14 +29,17 @@
   --color-accent: #ffa62b; /* saffron */
   --color-playback: #ffd75e; /* gold: hits of a recording playing back */
   --color-accent-strong: #f28b0c; /* a full, bright saffron fill (main buttons) */
-  --color-on-accent: #1b1206; /* text and icons on any saffron fill, in both themes (about 10:1 dark, 4.8:1 light) */
+  --color-on-accent: #1b1206; /* text and icons on any saffron fill: dark here (about 10:1), white in the light theme */
   --color-good: #3ddc84; /* on time, passed */
   --color-warn: #ffb547; /* early or late */
   --color-bad: #ff6b6b; /* missed */
   --color-record: #e5484d;
+  --tab-shadow: 4px 0 16px rgb(0 0 0 / 0.4); /* the Customize tab on the left edge */
+  --color-record-fill: #d1343a; /* red behind white text (Rec while recording, Stop): 4.9:1 */
   /* Pad grid: tile and role colours (cymbal, tom, hi-hat, snare, kick). */
   --grid-tile: #1d1f24;
   --grid-tile-edge: #2e3036;
+  --grid-edge-mix: 70%; /* tile borders: this much of the role colour, for at least 3:1 against the page */
   --grid-cymbal: #ffa62b;
   --grid-tom: #4d8dff;
   --grid-hat: #3ddc84;
@@ -60,15 +63,18 @@
   --color-border: #e0d6c6;
   --color-text: #1b1c1f;
   --color-text-muted: #5f6168;
-  --color-accent: #c46a00; /* deeper saffron, readable on light */
+  --color-accent: #a85a00; /* deeper saffron: 4.5:1 as text on cream, 5.1:1 under white text */
   --color-playback: #b8900f;
-  --color-accent-strong: #e07b00;
+  --color-accent-strong: #ad5c00; /* saffron fill under white text: 4.9:1 */
+  --color-on-accent: #fff; /* white on saffron in the light theme */
+  --tab-shadow: 2px 0 8px rgb(60 40 10 / 0.12);
   --color-good: #1a7f45; /* darker on light backgrounds, for at least 4.5:1 contrast */
   --color-warn: #a85d00;
   --color-bad: #c0392b;
   --color-record: #d1343a;
   --grid-tile: #fffdf9;
   --grid-tile-edge: #e2d9cb;
+  --grid-edge-mix: 100%; /* the full role colour: lighter mixes fall under 3:1 on cream */
   --grid-cymbal: #c46a00;
   --grid-tom: #2f6fd8;
   --grid-hat: #1f9d5a;

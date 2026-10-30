@@ -3,13 +3,15 @@
 /** A KeyboardEvent.code as people know it ("KeyS" → "S"). */
 export const keyName = (code) => (code === 'Space' ? 'Space' : code.replace('Key', ''));
 
-// A Pad grid tile's key: a small badge in its bottom-right corner, sized in screen pixels (11 px text).
+// A Pad grid tile's key: a small badge in its bottom-right corner, inside the tile's padding (11 px text).
 function gridBadge(pad, name) {
+  if (pad.showKey === false) return ''; // phones: no keyboard, no badge
   const u = pad.unit ?? 1;
   const width = (12 + name.length * 7) * u;
   const height = 18 * u;
-  const x = pad.x + pad.w / 2 - 12 * u - width;
-  const y = pad.y + pad.h / 2 - 12 * u - height;
+  const inset = pad.inset ?? 20 * u;
+  const x = pad.x + pad.w / 2 - inset - width;
+  const y = pad.y + pad.h / 2 - inset - height;
   return `
     <g class="key-label">
       <rect x="${x}" y="${y}" width="${width}" height="${height}" rx="${5 * u}"/>

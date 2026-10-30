@@ -5,6 +5,9 @@
 const ROWS = [58, 116, 172]; // back to front
 // Upright screens add rows further back (above the drawing's top edge), so the crowd strip fills with people.
 const BACK_ROWS = [-174, -116, -58, 0];
+// Rows further back still, as many as the drum kit view on upright phones needs (made last, so the other rows keep their
+// people).
+const farRows = (count) => Array.from({ length: count }, (_, i) => BACK_ROWS[0] - SPACING * (i + 1));
 const SPACING = 58;
 const SHIRTS = ['#d6334a', '#f08a3c', '#2a9d8f', '#3f7bd6', '#e9c46a', '#8a4fe0', '#e0408e', '#25b88a', '#f25c2a', '#5bc0eb'];
 const HAIR = ['#1a1512', '#3b2a1e', '#5a4632', '#141414', '#7a5c3a', '#b58a4c', '#c8642f', '#e3c07a'];
@@ -87,17 +90,28 @@ function fan(x, y, random, index) {
   </g>`;
 }
 
-/** @param {boolean} [tall] also draw the rows further back (upright screens) */
-export function crowd(tall = false) {
+// Which rows each screen shows (indexes into BACK_ROWS then ROWS): wide screens get one row further back than the front
+// three; upright screens all of them; upright phones one fewer with the Pad grid (it needs the height), and with the
+// drum kit all of them plus the far rows (the kit is short, so the crowd fills the space above it).
+const SHOWN = { wide: [3, 4, 5, 6], tall: [0, 1, 2, 3, 4, 5, 6], phone: [1, 2, 3, 4, 5, 6], kitPhone: [0, 1, 2, 3, 4, 5, 6] };
+
+/**
+ * @param {'wide' | 'tall' | 'phone' | 'kitPhone'} [mode]
+ * @param {number} [far] rows further back than BACK_ROWS (drum kit view on upright phones)
+ */
+export function crowd(mode = 'wide', far = 0) {
   const random = seeded(7);
   let index = 0;
-  const rows = (tall ? [...BACK_ROWS, ...ROWS] : ROWS).map((y, row) => {
+  const ys = [...BACK_ROWS, ...ROWS, ...farRows(far)];
+  const made = ys.map((y, row) => {
     const people = [];
     for (let x = -20 + (row % 2) * (SPACING / 2); x < 1640; x += SPACING) {
       people.push(fan(Math.round(x + (random() - 0.5) * 14), Math.round(y + (random() - 0.5) * 10), random, index++));
     }
     return people.join('');
-  }).join('');
+  });
+  const order = [...made.slice(BACK_ROWS.length + ROWS.length).reverse(), ...SHOWN[mode].map((row) => made[row])];
+  const rows = order.join(''); // back to front, so nearer people overlap those behind
   const ball = `<g class="beach-ball"><circle cx="0" cy="0" r="22" fill="#fbf7ee"/>
     <path d="M0 -22 A22 22 0 0 1 19 11 L0 0Z" fill="#e63946"/><path d="M19 11 A22 22 0 0 1 -19 11 L0 0Z" fill="#3f7bd6"/>
     <path d="M-19 11 A22 22 0 0 1 0 -22 L0 0Z" fill="#f4b400"/><circle r="5" fill="#fbf7ee"/>

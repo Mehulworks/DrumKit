@@ -4,11 +4,11 @@ import { ICONS } from './icons.js';
 
 export const recordingPanelMarkup = () => `
   <div class="panel-info">
-    <p class="recording-title">Your recording <span class="rec-badge" aria-hidden="true">REC</span></p>
+    <p class="recording-title">Your recording</p>
     <p class="panel-meta"></p>
   </div>
   <div class="panel-playback" role="group" aria-label="Playback"></div>
-  <p class="panel-empty-text">Recording deleted. Press <strong>● Rec</strong> to start a new one.</p>
+  <p class="panel-empty-text">Recording deleted. Press <strong>● Rec</strong> to start a new one.<br><button type="button" class="coach-link" data-panel="help-link">How layers work →</button></p>
   <button type="button" class="panel-button icon-only save-button" data-panel="download" aria-label="Download as a WAV file" title="Download as a WAV file">
     ${ICONS.download}
   </button>
@@ -24,13 +24,16 @@ export const recordingPanelMarkup = () => `
   </div>
   <div class="panel-footer">
     <div class="panel-layer-actions">
+      <button type="button" class="panel-button stop-button" data-panel="stop" aria-label="Stop recording">
+        ${ICONS.stop}<span class="panel-button-text">Stop</span>
+      </button>
       <button type="button" class="panel-button layer-button" data-panel="layer">
-        <span class="record-dot" aria-hidden="true"></span>${ICONS.plus}<span class="panel-button-text">Add layer</span>
+        ${ICONS.plus}<span class="panel-button-text">Add layer</span>
       </button>
       <button type="button" class="panel-button" data-panel="undo" aria-label="Undo last layer" title="Undo last layer">
         ${ICONS.undo}<span class="panel-button-text">Undo layer</span>
       </button>
     </div>
   </div>
-  <button type="button" class="panel-fold" aria-expanded="true" aria-label="Fold the recording panel">${ICONS.chevron}</button>
+  <button type="button" class="panel-fold" aria-expanded="true" aria-label="Fold the recording panel"><span class="panel-fold-text" aria-hidden="true">Layers</span>${ICONS.chevron}</button>
   <button type="button" class="panel-fold panel-close" aria-label="Close">${ICONS.close}</button>`;

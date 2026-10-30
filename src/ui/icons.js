@@ -25,6 +25,7 @@ export const ICONS = {
   close: svg(`<path d="M6 6l12 12M18 6L6 18"/>`),
   record: svg(`<circle cx="12" cy="12" r="6" fill="currentColor" stroke="none"/>`),
   play: svg(`<path d="M8 5.5v13l10.5-6.5z" fill="currentColor" stroke="none"/>`),
+  pause: svg(`<rect x="7" y="6" width="3.5" height="12" rx="1" fill="currentColor" stroke="none"/><rect x="13.5" y="6" width="3.5" height="12" rx="1" fill="currentColor" stroke="none"/>`),
   stop: svg(`<rect x="7" y="7" width="10" height="10" rx="1.5" fill="currentColor" stroke="none"/>`),
   loop: svg(`<path d="M17 3l3 3-3 3"/><path d="M4 12v-2a4 4 0 0 1 4-4h12"/>
     <path d="M7 21l-3-3 3-3"/><path d="M20 12v2a4 4 0 0 1-4 4H4"/>`),
@@ -44,6 +45,8 @@ export const ICONS = {
     <circle cx="12" cy="19" r="1.6" fill="currentColor" stroke="none"/>`),
   expand: svg(`<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>`),
   drum: svg(`<ellipse cx="12" cy="8" rx="8" ry="3"/><path d="M4 8v8c0 1.7 3.6 3 8 3s8-1.3 8-3V8"/><path d="M8 10.8v7.8M16 10.8v7.8"/>`),
+  // Customize: horizontal sliders, each knob at a different setting.
+  adjust: svg(`<path d="M4 7h3M11 7h9M4 12h9M17 12h3M4 17h2M10 17h10"/><circle cx="9" cy="7" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="8" cy="17" r="2"/>`),
   palette: svg(`<path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.6-.8 1.3-1.7-.4-1.1.3-2.3 1.5-2.3H17a4 4 0 0 0 4-4c0-5.5-4-10-9-10z"/><circle cx="7.5" cy="11" r="1.2"/><circle cx="10.5" cy="7" r="1.2"/><circle cx="15" cy="7.5" r="1.2"/>`),
   image: svg(`<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/><circle cx="16" cy="9" r="1.5"/>`),
   sticks: svg(`<path d="M5 4l10 16M19 4L9 20"/><circle cx="5" cy="4" r="1.3"/><circle cx="19" cy="4" r="1.3"/>`),

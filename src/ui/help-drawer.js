@@ -51,7 +51,7 @@ export function setupHelpDrawer(button, panel, pads, maxLayers, targets) {
       <ol class="help-steps">
         ${step(1, 'Record a beat', `Press ${icon('record')} <strong>Rec</strong>, play a simple beat (for example kick and snare), then press Rec again. It turns red and counts while recording.`, recordPicture(), 'record')}
         ${step(2, 'Add a layer', `The <strong>recording panel</strong> appears under the toolbar. Press ${icon('plus')} <strong>Add layer</strong>: your beat starts playing.`, addLayerPicture(), 'layer')}
-        ${step(3, 'Play on top', 'A new red row appears. Everything you play now fills it in, in time with your beat. Press <strong>Stop adding</strong> (or the red row) when done.', layeringPicture())}
+        ${step(3, 'Play on top', 'A new red row appears. Everything you play now fills it in, in time with your beat. Press <strong>Stop</strong> (or the red row) when done.', layeringPicture())}
         ${step(4, `Stack up to ${maxLayers} layers`, 'Each layer gets its own row and colour, and they all play together. Try hi-hat, then cymbals.', stackPicture())}
       </ol>
       <p>${icon('undo')} <strong>Undo layer</strong> removes the last layer. ${icon('trash')} <strong>Delete</strong> (click twice) removes the whole recording. ${icon('chevron')} folds the panel.</p>`)}
@@ -73,14 +73,14 @@ export function setupHelpDrawer(button, panel, pads, maxLayers, targets) {
     ${section('modes', 'Focus & Concert', `
       <p>${icon('expand')} <strong>Focus</strong> hides everything but the drums so they fill the screen (full screen where the browser allows it). Press <strong>F</strong> to switch it on or off; <strong>Esc</strong> or the faint ✕ in the corner also leaves.</p>
       <button type="button" class="try-button" data-try="focus">Try it</button>
-      <p>${icon('crowd')} <strong>Concert</strong> puts a crowd and stage lights behind your kit. They bob to the tempo, raise their hands on your crashes, jump when you play fast and cheer when you stop. The lights glow gently; switch off <strong>Flashing lights</strong> in the ⋮ menu to keep them still. On phones, Learn and Concert take turns so the kit stays big.</p>
+      <p>${icon('crowd')} <strong>Concert</strong> puts a crowd and stage lights behind your kit. They bob to the tempo, raise their hands on your crashes, jump when you play fast and cheer when you stop. The lights glow gently; switch off <strong>Flashing lights</strong> in the ⋮ menu to keep them still. Learn and Concert take turns: a lesson pauses Concert, and it comes back when the lesson ends. You can record during Concert.</p>
       <button type="button" class="try-button" data-try="concert">Try it</button>`)}
     ${section('settings', 'More menu', `
       <p>${icon('more')} The ⋮ button holds EQ, Focus, light or dark mode, the settings (key names on the drums, Flashing lights, the metronome and its tempo), How to play and Reset all.</p>`)}
     ${section('privacy', 'Privacy', `
       <p>Everything stays in this browser. Recordings last until you reload the page; your settings are remembered on this device. Nothing is uploaded.</p>`)}
     ${section('keys', 'Playing and keys', `
-      <p>Tap or click a drum; several fingers at once work. In <strong>Hover</strong> mode (top centre) a drum plays as soon as your mouse, or a sliding finger, moves onto it. On a computer, the lit keys play the drums:</p>
+      <p>Tap or click a drum; several fingers at once work. In <strong>Hover</strong> mode (top centre; called <strong>Drag</strong> on touch screens) a drum plays as soon as your mouse, or a sliding finger, moves onto it. On a computer, the lit keys play the drums:</p>
       <div class="help-keys-map"></div>`)}
     ${section('about', 'About', `
       <p>${creditLine('about-link')}</p>

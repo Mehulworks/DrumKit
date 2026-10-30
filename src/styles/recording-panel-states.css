@@ -36,14 +36,19 @@
   text-overflow: ellipsis;
 }
 
+/* Folded: the layer count is in the Layers button, so the status line steps aside (it stays while recording). */
+.recording-panel.is-folded:not(.is-rec-live) .panel-meta {
+  display: none;
+}
+
 .recording-panel.is-folded .panel-fold svg {
   transform: rotate(-90deg);
 }
 
-/* After Delete: a short note, the How layers work button and a close button. */
+/* After Delete: a short note with a "How layers work →" link, and a close button. */
 .recording-panel.is-empty {
-  grid-template-columns: 1fr auto auto;
-  grid-template-areas: "empty help close";
+  grid-template-columns: 1fr auto;
+  grid-template-areas: "empty close";
 }
 
 .recording-panel.is-empty .panel-info,
@@ -51,6 +56,7 @@
 .recording-panel.is-empty .save-button,
 .recording-panel.is-empty .delete-button,
 .recording-panel.is-empty .panel-timeline,
+.recording-panel.is-empty .help-button,
 .recording-panel.is-empty .panel-footer,
 .recording-panel.is-empty .panel-fold:not(.panel-close) {
   display: none;
@@ -82,22 +88,48 @@
   }
 }
 
-/* Phones: Undo becomes an icon (Add layer keeps its words, as the main action). */
+/* Phones: Undo and Play/Pause become round icons (Add layer and Stop keep their words, as the recording actions). */
 @media (max-width: 35em), (max-height: 30em) {
-  [data-panel="undo"] .panel-button-text {
+  [data-panel="undo"] .panel-button-text,
+  .play-button .panel-button-text {
     display: none;
+  }
+
+  .play-button,
+  .play-button:hover:not(:disabled) {
+    width: 2rem;
+    padding: 0;
+    justify-content: center;
   }
 }
 
-/* Upright phones: title and fold, then the player with Delete and help, the timeline, then the footer. */
+/* Upright phones: the panels run edge to edge. Title and fold, then Download, Delete and help with the player on the
+   right, the timeline, then the footer. */
 @media (max-width: 35em) {
   .recording-panel {
-    grid-template-columns: 1fr auto auto auto;
+    grid-template-columns: auto auto auto 1fr;
     grid-template-areas:
       "info info info fold"
-      "play save delete help"
+      "save delete help play"
       "timeline timeline timeline timeline"
       "footer footer footer footer";
+    margin-inline: 0;
+    border-inline: 0;
+    border-radius: 0;
+    padding-inline: var(--space-md);
+  }
+
+  .panel-fold,
+  .panel-playback {
+    justify-self: end;
+  }
+
+  .save-button {
+    margin-left: 0;
+  }
+
+  #learn-panel .learn-title {
+    font-size: 0.875rem;
   }
 
   .recording-panel.is-folded {
@@ -105,17 +137,34 @@
     grid-template-areas: "info play fold";
   }
 
-  .recording-panel.is-empty {
-    grid-template-areas: "empty close" "help help";
+  #recording-panel .recording-title {
+    font-size: 0.875rem;
   }
 
-  .help-button {
-    justify-self: end;
+  .recording-panel.is-folded .panel-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
   }
 
-  .recording-panel.is-empty .help-button {
-    justify-self: start;
+  /* Folded on a phone: title, Play, Loop and Layers; the play time would crowd the title. */
+  .recording-panel.is-folded .panel-time {
+    display: none;
   }
+
+  /* During the first take the player row (all disabled then) steps aside, so the panel covers less. */
+  #recording-panel.is-taking {
+    grid-template-areas:
+      "info info info fold"
+      "timeline timeline timeline timeline"
+      "footer footer footer footer";
+  }
+
+  #recording-panel.is-taking :is(.panel-playback, .save-button, .delete-button, .help-button) {
+    display: none;
+  }
+
+
 }
 
 
@@ -129,14 +178,10 @@
       "footer footer footer footer footer footer footer";
   }
 
-  /* The title may shrink; while recording, the status line steps aside (Rec in the toolbar shows the timer). */
+  /* The title may shrink; while recording, the status line shows the time and the limit. */
   .panel-info {
     min-width: 0;
     overflow: hidden;
-  }
-
-  .recording-panel.is-rec-live .panel-meta {
-    display: none;
   }
 
   /* No room for words here: Play/Stop is a round icon button. */

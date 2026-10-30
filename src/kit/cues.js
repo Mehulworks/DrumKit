@@ -11,7 +11,7 @@ const FALL = 0.2; // seconds it takes to fade after the moment
 // The glow's shape: an oval over a drum or cymbal, a rounded rectangle over a Pad grid tile.
 function glowShape(pad, attributes) {
   const shape = pad.grid
-    ? { tag: 'rect', x: pad.x - pad.w / 2, y: pad.y - pad.h / 2, width: pad.w, height: pad.h, rx: 28 }
+    ? { tag: 'rect', x: pad.x - pad.w / 2, y: pad.y - pad.h / 2, width: pad.w, height: pad.h, rx: pad.rx }
     : { tag: 'ellipse', cx: pad.x, cy: pad.y, rx: pad.r ?? pad.w / 2, ry: pad.r ?? pad.h / 2 };
   const { tag, ...rest } = shape;
   const glow = document.createElementNS(SVG_NS, tag);

@@ -1,4 +1,4 @@
-// Settings in the More menu: switches for key names on the pads and flashing lights, the Metronome switch with its tempo
+// Settings in the More menu: switches for key names and instrument names on the pads and flashing lights, the Metronome switch with its tempo
 // − and + (active while it is on), and Reset all (asks first, with Cancel and Yes). They work without closing the menu,
 // and every choice is remembered in this browser.
 import { setTempo, onTempoChange } from '../audio/metronome.js';
@@ -16,10 +16,12 @@ const toggle = (id, icon, label) => `<button type="button" class="icon-button me
 /**
  * @param {HTMLElement} container the settings area in the More menu
  * @param {(show: boolean) => void} showKeys shows or hides the key names on the pads
+ * @param {(show: boolean) => void} showNames shows or hides the instrument names on the Pad grid tiles
  */
-export function setupMenuSettings(container, showKeys) {
+export function setupMenuSettings(container, showKeys, showNames) {
   container.innerHTML = `
     ${toggle('showKeys', ICONS.keyboard, 'Show keys on pads')}
+    ${toggle('showNames', ICONS.grid, 'Show names on pads')}
     ${toggle('flashLights', ICONS.sun, 'Flashing lights')}
     <button type="button" class="icon-button menu-toggle" role="menuitemcheckbox" data-keep-open data-metronome
       aria-checked="false">${ICONS.metronome}<span class="button-label">Metronome</span><span class="menu-switch" aria-hidden="true"></span></button>
@@ -32,6 +34,7 @@ export function setupMenuSettings(container, showKeys) {
 
   const apply = {
     showKeys: () => showKeys(settings.showKeys),
+    showNames: () => showNames(settings.showNames),
     flashLights: () => applyFlashSetting(),
   };
   function mark() {
@@ -40,10 +43,16 @@ export function setupMenuSettings(container, showKeys) {
     const on = isMetronomeOn();
     container.querySelector('[data-metronome]').setAttribute('aria-checked', String(on));
     container.querySelector('.menu-tempo').classList.toggle('is-off', !on);
+    // Names only show on the Pad grid, so in the drum kit view the switch is greyed, with a note saying where they show.
+    const names = container.querySelector('[data-setting=showNames]');
+    names.disabled = settings.view !== 'grid';
+    names.title = names.disabled ? 'Names show in Pad grid view' : '';
+    names.querySelector('.button-label').innerHTML = `Show names on pads${names.disabled ? '<span class="menu-note">Pad grid view only</span>' : ''}`;
     container.querySelectorAll('[data-tempo]').forEach((step) => { step.disabled = !on; });
   }
   // The metronome chip by Rec can switch the metronome off too.
   document.addEventListener('metronome-change', mark);
+  document.getElementById('more-button').addEventListener('click', mark); // the view may have changed since
   container.addEventListener('click', (event) => {
     const switchButton = event.target.closest('[data-setting]');
     if (switchButton) {

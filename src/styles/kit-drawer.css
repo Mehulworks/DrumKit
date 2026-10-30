@@ -10,7 +10,7 @@
   align-items: center;
   gap: 0.25rem;
   padding: 0.75rem 0.375rem 0.75rem 0.25rem;
-  border: 1px solid var(--color-border);
+  border: 2px solid color-mix(in srgb, var(--color-text) 40%, transparent); /* shows on dark floors and the crowd */
   border-left: 0;
   border-radius: 0 var(--radius-md) var(--radius-md) 0;
   background: var(--color-surface);
@@ -18,12 +18,12 @@
   font: inherit;
   font-size: 0.75rem;
   font-weight: 600;
-  box-shadow: 4px 0 16px rgb(0 0 0 / 0.25);
+  box-shadow: var(--tab-shadow);
   cursor: pointer;
   transform: translateY(-50%);
 }
 
-.kit-tab svg {
+.kit-tab > svg {
   transform: rotate(-90deg);
 }
 
@@ -31,6 +31,40 @@
   writing-mode: vertical-rl;
   transform: rotate(180deg);
   letter-spacing: 0.08em;
+}
+
+.kit-tab-icon {
+  display: none;
+}
+
+/* Phones, while the recording panel or a lesson is open: no tab, so the pads get the room. */
+@media (max-width: 35em), (max-height: 30em) {
+  body:has(#recording-panel:not([hidden])) .kit-tab,
+  body:has(#learn-panel:not([hidden])) .kit-tab {
+    display: none;
+  }
+}
+
+/* Phones (under 500 px on the short side): the icon alone; the button keeps "Customize" as its accessible name. */
+@media (max-width: 499.98px), (max-height: 499.98px) {
+  .kit-tab {
+    padding: 0.625rem 0.375rem 0.625rem 0.25rem;
+    box-shadow: var(--tab-shadow);
+  }
+
+  .kit-tab > svg,
+  .kit-tab-label {
+    display: none;
+  }
+
+  .kit-tab-icon {
+    display: flex;
+  }
+
+  .kit-tab-icon svg {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
 }
 
 .kit-tab:hover {

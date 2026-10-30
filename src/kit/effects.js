@@ -23,7 +23,7 @@ export function createEffects(svg, pads) {
     if (!pad.r && !pad.grid) continue;
     const clip = document.createElementNS(SVG_NS, 'clipPath');
     clip.id = `clip-${pad.id}`;
-    clip.innerHTML = pad.grid ? `<rect x="${pad.x - pad.w / 2}" y="${pad.y - pad.h / 2}" width="${pad.w}" height="${pad.h}" rx="28"/>`
+    clip.innerHTML = pad.grid ? `<rect x="${pad.x - pad.w / 2}" y="${pad.y - pad.h / 2}" width="${pad.w}" height="${pad.h}" rx="${pad.rx}"/>`
       : `<circle cx="${pad.x}" cy="${pad.y}" r="${pad.r * (HEAD[pad.art] ?? 0.93)}"/>`;
     defs.append(clip);
   }

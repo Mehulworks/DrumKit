@@ -18,7 +18,7 @@ const EARLY_GRACE = 0.08; // a hit this early (seconds) before the start still c
 
 /**
  * @typedef {'idle' | 'counting' | 'recording' | 'playing' | 'overdubbing'} Mode
- * @typedef {{mode: Mode, loop: boolean, hasRecording: boolean, layers: number}} RecorderState
+ * @typedef {{mode: Mode, loop: boolean, hasRecording: boolean, layers: number, paused: boolean}} RecorderState
  * @param {(id: string, time: number) => void} play plays a pad at an audio-clock time
  * @param {(state: RecorderState) => void} onChange called whenever the state changes
  */
@@ -40,10 +40,11 @@ export function createRecorder(play, onChange) {
   let bookedUntil = 0;
   let stopScheduler = null;
   let layerHits = 0;
+  let pausedAt = 0; // seconds into the pattern where playback was paused (0: play from the start)
   let version = 0; // goes up whenever the hits change, so the display knows when to redraw the pattern
 
   const clock = () => getAudio().context.currentTime;
-  const notify = () => onChange({ mode, loop, hasRecording: events.length > 0, layers });
+  const notify = () => onChange({ mode, loop, hasRecording: events.length > 0, layers, paused: pausedAt > 0 });
   const isPlaying = () => mode === 'playing' || mode === 'overdubbing';
 
   // After events change mid-playback, point at the first event not yet booked (events stay sorted by time).
@@ -98,12 +99,15 @@ export function createRecorder(play, onChange) {
     notify();
   }
 
-  function startPlaying() {
+  /** @param {number} [from] seconds into the pattern to start at (after a pause) */
+  function startPlaying(from = 0) {
     if (!events.length) return;
     const context = getAudio().context;
-    playStart = isMetronomeOn() ? beatAfter(context.currentTime + 0.03) : context.currentTime + 0.05;
+    // From the start, on the beat when the metronome is on; after a pause, straight away from where it stopped.
+    playStart = from ? context.currentTime + 0.05 - from : isMetronomeOn() ? beatAfter(context.currentTime + 0.03) : context.currentTime + 0.05;
     cycleStart = playStart;
-    next = 0;
+    next = from ? events.filter((event) => event.at < from).length : 0;
+    pausedAt = 0;
     bookedUntil = 0;
     mode = 'playing';
     notify();
@@ -130,6 +134,7 @@ export function createRecorder(play, onChange) {
   function stopPlaying() {
     stopScheduler?.();
     stopScheduler = null;
+    pausedAt = 0;
     if (mode === 'overdubbing') stopOverdub();
     if (isPlaying()) {
       mode = 'idle';
@@ -170,7 +175,7 @@ export function createRecorder(play, onChange) {
     toggleLayer() {
       if (mode === 'overdubbing') return stopOverdub();
       if (!events.length || mode === 'counting' || mode === 'recording' || layers >= MAX_LAYERS) return;
-      if (mode === 'idle') startPlaying();
+      if (mode === 'idle') startPlaying(pausedAt);
       startOverdub();
     },
     /** The hits for drawing: each with its time in the pattern and its layer. While recording: the take so far. */
@@ -180,12 +185,17 @@ export function createRecorder(play, onChange) {
       const elapsed = clock() - startedAt;
       return { events: take0, length: VIEW_STEPS.find((step) => step >= elapsed) ?? MAX_LENGTH, layers: 0, version };
     },
-    /** Play button: play from the start, or stop. Ends a recording or count-in first. */
+    /** Play button: play (from where it was paused, or the start), or pause. Ends a recording or count-in first. */
     togglePlay() {
       if (mode === 'counting') cancelCountIn();
       if (mode === 'recording') stopRecording();
-      if (isPlaying()) stopPlaying();
-      else startPlaying();
+      if (isPlaying()) {
+        const now = clock();
+        const at = now < playStart ? 0 : (now - playStart) % length;
+        stopPlaying();
+        pausedAt = at;
+        notify();
+      } else startPlaying(pausedAt);
     },
     /** @param {boolean} on */
     setLoop(on) {
@@ -237,7 +247,7 @@ export function createRecorder(play, onChange) {
     /** Live timing for the display. */
     status() {
       // Idle needs no clock, so the display never starts the audio before the first click.
-      if (mode === 'idle') return { mode, length: events.length ? length : 0 };
+      if (mode === 'idle') return { mode, length: events.length ? length : 0, position: pausedAt };
       const now = clock();
       if (mode === 'counting') {
         const left = Math.ceil((startedAt - now) / countBeat);

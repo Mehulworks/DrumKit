@@ -151,6 +151,11 @@
   .learn-actions {
     justify-content: flex-start;
   }
+
+  /* Start on the right, like Play in the recording panel. */
+  .learn-actions > [data-learn="start"] {
+    margin-left: auto;
+  }
 }
 
 /* The mode switch and Start are the same height (32px) on every screen. */

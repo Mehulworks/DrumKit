@@ -77,3 +77,20 @@
 .menu-tempo.is-off {
   opacity: 0.45;
 }
+
+/* A switch that does not apply in this view (Show names, in the drum kit view): greyed, with a short note under it. */
+.menu-toggle:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.menu-toggle:disabled .button-label {
+  text-align: left;
+}
+
+.menu-note {
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 400;
+  color: var(--color-text-muted);
+}

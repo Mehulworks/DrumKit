@@ -37,7 +37,7 @@ const card = (kind, item, selected, picture) => `
  *   open there); eq, sticks and backdrops are the empty areas other files fill in
  */
 export function setupKitDrawer(button, panel, { onTheme, onKit, onView, onReset }) {
-  button.innerHTML = `${ICONS.chevron}<span class="kit-tab-label">Customize</span>`;
+  button.innerHTML = `${ICONS.chevron}<span class="kit-tab-label">Customize</span><span class="kit-tab-icon">${ICONS.adjust}</span>`;
   panel.innerHTML = `
   <div class="drawer-header">
     <h2 class="drawer-title">Customize</h2>
@@ -158,10 +158,14 @@ export function setupKitDrawer(button, panel, { onTheme, onKit, onView, onReset 
 
   // The edge tab sits a little way into the drum area, so panels above it (recording, lessons) never cover it.
   const kitArea = document.getElementById('kit');
+  // Upright phones: near the top, in the empty space above the Pad grid, so the grid can use the full width.
+  const uprightPhone = matchMedia('(orientation: portrait) and (max-width: 499.98px)');
   const placeTab = () => {
     const box = kitArea.getBoundingClientRect();
-    button.style.setProperty('--tab-top', `${Math.round(box.top + Math.max(24, box.height * 0.18) + button.offsetHeight / 2)}px`);
+    const offset = uprightPhone.matches ? 16 : Math.max(24, box.height * 0.18);
+    button.style.setProperty('--tab-top', `${Math.round(box.top + offset + button.offsetHeight / 2)}px`);
   };
+  uprightPhone.addEventListener('change', placeTab);
   new ResizeObserver(placeTab).observe(kitArea);
 
   refresh();

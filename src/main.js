@@ -64,7 +64,8 @@ function mountKit(id, changed = false) {
   const grid = settings.view === 'grid';
   gridShape = areaShape();
   gridWidth = areaSize().width;
-  const kit = grid ? gridKit(getKit(id), areaSize()) : getKit(id);
+  const tabHidden = getComputedStyle(byId('kit-button')).display === 'none'; // phones, recording or in a lesson
+  const kit = grid ? gridKit(getKit(id), areaSize(), concert?.gridTop(), tabHidden) : getKit(id);
   useSounds(kit.sounds);
   const { svg, motion } = stage.mount(kit);
   if (!grid) {
@@ -72,6 +73,7 @@ function mountKit(id, changed = false) {
     applyBackdrop(svg, settings.background);
   }
   svg.classList.toggle('show-keys', settings.showKeys);
+  svg.classList.toggle('hide-names', !settings.showNames);
   sticks = grid ? null : createSticks(svg, kit.pads); // sticks
   sticks?.setVisible(settings.showSticks); // sticks
   sticks?.setLook(settings.look.stickType, settings.look); // sticks
@@ -123,6 +125,8 @@ new ResizeObserver(() => {
     if (settings.view === 'grid' && changed && byId('learn-panel').hidden) mountKit(settings.kit);
   }, 150);
 }).observe(byId('kit'));
+// The Pad grid makes room for the crowd, and fills the space a lesson leaves (before it starts, so nothing is cut short).
+for (const name of ['concert-change', 'lesson-open']) document.addEventListener(name, () => { if (settings.view === 'grid') mountKit(settings.kit); });
 
 unlockAudioOnFirstGesture();
 playIntro((id, time) => bookHit(id, time));
@@ -181,7 +185,8 @@ tabResets.sticks = setupSticksSettings(kitDrawer.sticks, { // sticks
   setVisible: (on) => sticks?.setVisible(on), // sticks
   setLook: (type, extras) => sticks?.setLook(type, extras), // sticks
 }); // sticks
-setupMenuSettings(byId('menu-settings'), (show) => stage.current.svg.classList.toggle('show-keys', show));
+setupMenuSettings(byId('menu-settings'), (show) => stage.current.svg.classList.toggle('show-keys', show),
+  (show) => stage.current.svg.classList.toggle('hide-names', !show));
 setupResetAll(byId('reset-all'));
 
 // Every live hit (touch, mouse, Hover or keyboard) goes through here, so all of them can be recorded.

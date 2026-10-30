@@ -125,6 +125,14 @@
   pointer-events: auto;
 }
 
+/* Upright phones: notices sit at the top, under the toolbar, so they never cover the drums at the bottom. */
+@media (orientation: portrait) and (max-width: 35em) {
+  .toast.has-close {
+    top: calc(var(--topbar-bottom, 3.5rem) + var(--space-sm));
+    bottom: auto;
+  }
+}
+
 .toast-close {
   display: inline-flex;
   flex: none;
@@ -155,5 +163,12 @@ body:has(#learn-panel:not([hidden])) .toast {
   .toast {
     width: calc(100vw - 2rem);
     max-width: none;
+  }
+}
+
+/* While a notice shows at the top of an upright phone, the Customize tab steps down below it. */
+@media (orientation: portrait) and (max-width: 35em) {
+  body:has(.toast.has-close) .kit-tab {
+    transform: translateY(calc(-50% + 4.5rem));
   }
 }

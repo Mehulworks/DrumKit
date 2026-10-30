@@ -39,7 +39,8 @@
   border-radius: 0.25rem;
 }
 
-@media (max-height: 30em) {
+/* Phones (under 500 px on the short side): every pixel goes to playing; the credit stays in the ⋮ menu and the guide. */
+@media (max-height: 30em), (max-width: 31.25em) {
   .credits {
     display: none;
   }

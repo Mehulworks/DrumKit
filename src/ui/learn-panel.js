@@ -8,6 +8,7 @@ import { createBeatGrid } from './beat-grid.js';
 import { setupLearnExtras } from './learn-extras.js';
 import { learnPanelMarkup } from './learn-panel-markup.js';
 import * as text from './learn-texts.js';
+import { createLearnCaption } from './learn-caption.js';
 import { settings, saveSettings } from './storage.js';
 
 const SPEEDS = [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5];
@@ -25,11 +26,7 @@ export function setupLearnPanel(panel, player) {
     lines: ['A tick on every beat while the lesson plays, to keep you in time.', 'Tap to turn it off or on.'] });
   const grid = createBeatGrid(part('.beat-grid'));
   setupLearnExtras(panel); // the ⋮ dropdown on phones
-  // The lesson's tip, as a caption at the bottom of the screen (it never takes clicks).
-  const caption = document.createElement('p');
-  caption.className = 'learn-caption';
-  caption.hidden = true;
-  document.body.append(caption);
+  const caption = createLearnCaption(); // the lesson's tip at the bottom of the screen
   let item = null;
   let list = [];
   let label = 'Lesson';
@@ -74,7 +71,7 @@ export function setupLearnPanel(panel, player) {
     part('.learn-meta').innerHTML = mode === 'steps'
       ? '<span class="meta-long">Hit each glowing drum; the beat waits for you.</span><span class="meta-short">The beat waits for you.</span>'
       : `<span class="meta-long">${bpm}${item.realBpm ? ` (real speed ${item.realBpm})` : ''} · ${goal()}</span><span class="meta-short">${bpm} · ${shortGoal()}</span>`;
-    caption.innerHTML = `<b>Tip:</b> ${item.tip}`;
+    caption.setTip(item.tip);
     part('.learn-speed-value').textContent = `${Math.round(speed * 100)}%`;
     part('[data-learn=next]').hidden = true;
     part('[data-learn=push]').hidden = true;
@@ -100,7 +97,7 @@ export function setupLearnPanel(panel, player) {
     if (action === 'close') {
       stopAll();
       panel.hidden = true;
-      caption.hidden = true;
+      caption.hide();
       closeListener();
     } else if (action === 'start') {
       // Start during a demo ends the demo and starts your run; during your run it means Stop.
@@ -159,7 +156,7 @@ export function setupLearnPanel(panel, player) {
       showMode();
       showItem();
       panel.hidden = false;
-      caption.hidden = false;
+      caption.show();
     },
     /** Redraws the grid for the kit on stage (after a kit change). */
     refresh() {

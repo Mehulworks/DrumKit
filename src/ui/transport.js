@@ -76,7 +76,7 @@ export function setupTransport(area, recorder) {
     record.classList.toggle('is-near-limit', status.mode === 'recording' && status.limit - status.elapsed <= WARN_LAST);
     const label = part('.record-label');
     if (status.mode === 'counting') label.textContent = String(status.beatsLeft);
-    else if (status.mode === 'recording') label.textContent = `Stop ${formatTime(status.elapsed)} / ${formatTime(status.limit)}`;
+    else if (status.mode === 'recording') label.innerHTML = `<span class="record-word">Stop </span>${formatTime(status.elapsed)}<span class="record-limit"> / ${formatTime(status.limit)}</span>`;
     else label.textContent = 'Rec';
 
     const now = isMetronomeOn() ? getAudio().context.currentTime : 0;

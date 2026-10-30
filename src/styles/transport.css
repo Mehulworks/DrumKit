@@ -54,7 +54,7 @@
 /* :hover is listed too, so the hover colour never hides the red. */
 .record-button.is-recording,
 .record-button.is-recording:hover:not(:disabled) {
-  background: var(--color-record);
+  background: var(--color-record-fill);
   color: #fff;
 }
 
@@ -102,5 +102,17 @@
   .transport {
     padding-right: 0;
     border-right: 0;
+  }
+
+  /* Just the time ("0:12") next to the stop square: the word and the limit would push Learn and ⋮ off the toolbar.
+     Both stay readable to screen readers. */
+  .record-word,
+  .record-limit {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 }

@@ -12,7 +12,7 @@ function createShape(pad) {
     rect.setAttribute('y', String(pad.y - pad.h / 2));
     rect.setAttribute('width', String(pad.w));
     rect.setAttribute('height', String(pad.h + (pad.grid ? 0 : PEDAL_DEPTH)));
-    rect.setAttribute('rx', pad.grid ? '28' : '12');
+    rect.setAttribute('rx', String(pad.grid ? pad.rx : 12));
     return rect;
   }
   const circle = document.createElementNS(SVG_NS, 'circle');

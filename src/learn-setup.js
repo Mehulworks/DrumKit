@@ -108,7 +108,7 @@ export function setupLearn({ stage, bookHit, cues, lessonFocus, sticks, concert,
     lessonLock.clear();
     turns.lessonClosed();
   });
-  // On phones, Learn and Concert take turns and the recording panel folds during a lesson, so the kit stays big.
+  // Learn and Concert take turns; on phones the recording panel also folds during a lesson, so the kit stays big.
   const turns = setupPhoneTurns({
     concert,
     panel,
@@ -118,6 +118,7 @@ export function setupLearn({ stage, bookHit, cues, lessonFocus, sticks, concert,
   const learnDrawer = setupLearnDrawer(byId('learn-button'), byId('learn-drawer'), (item, list, label) => {
     learnPanel.open(item, list, label);
     turns.lessonOpened();
+    document.dispatchEvent(new CustomEvent('lesson-open')); // main.js refits the Pad grid
     learnRotateTip();
   });
 

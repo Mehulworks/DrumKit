@@ -4,7 +4,7 @@ import { ICONS } from './icons.js';
 import { settings, saveSettings } from './storage.js';
 
 const SHOW_FOR = 3200; // ms
-const NOTICE_FOR = 9000; // ms a one-time notice stays unless closed
+const NOTICE_FOR = 8000; // ms a one-time notice stays unless closed: time to read two lines, then it goes
 
 /**
  * @param {string} text

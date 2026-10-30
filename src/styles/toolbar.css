@@ -141,3 +141,16 @@
   }
 }
 
+
+/* Small phones (under about 376 px wide): tighter side padding and gaps, so ⋮ stays on screen. */
+@media (max-width: 23.5em) {
+  .topbar {
+    gap: 0.375rem;
+    padding-inline: 0.625rem;
+  }
+
+  .topbar-end,
+  .toolbar-buttons {
+    gap: 0.375rem;
+  }
+}

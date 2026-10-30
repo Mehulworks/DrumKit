@@ -3,6 +3,7 @@
 // recording is deleted it shrinks to a short note.
 import { ICONS } from './icons.js';
 import { attachTooltip } from './tooltip.js';
+import { roleOf } from '../kit/grid-layout.js';
 import { confirmToast } from './confirm-toast.js';
 import { showTipOnce } from './tip.js';
 import { downloadRecording } from './download-recording.js';
@@ -44,12 +45,17 @@ export function setupRecordingPanel(panel, recorder, maxLayers, showLayerHelp) {
   }
 
   layer.addEventListener('click', () => recorder.toggleLayer());
+  // Stop ends whatever is being recorded, the first take or a layer; Add layer only starts one. Both are always there,
+  // so no button changes meaning under the thumb.
+  const stop = part('[data-panel=stop]');
+  stop.addEventListener('click', () => (state.mode === 'overdubbing' ? recorder.toggleLayer() : recorder.toggleRecord()));
   undo.addEventListener('click', () => recorder.undoLayer());
   save.addEventListener('click', () => downloadRecording(save, recorder.pattern()));
   del.addEventListener('click', () => {
     closeAsk = confirmToast(del, 'Delete the whole recording, with all its layers?', 'Yes, delete', () => recorder.deleteRecording());
   });
   help.addEventListener('click', () => showLayerHelp());
+  part('[data-panel=help-link]').addEventListener('click', () => showLayerHelp());
   fold.addEventListener('click', () => setFolded(!panel.classList.contains('is-folded')));
   part('.panel-close').addEventListener('click', () => {
     showDeletedNote = false;
@@ -63,7 +69,7 @@ export function setupRecordingPanel(panel, recorder, maxLayers, showLayerHelp) {
   part('.timeline-rows').addEventListener('click', (event) => {
     if (event.target.closest('.is-recording-row, .is-next-row')) recorder.toggleLayer();
   });
-  attachTooltip(layer, { title: 'Add a layer', lines: ['Plays your recording and adds what you play on top, like a second drummer.', `Press again to stop. Up to ${maxLayers} layers.`] });
+  attachTooltip(layer, { title: 'Add a layer', lines: ['Plays your recording and adds what you play on top, like a second drummer.', `Press Stop when done. Up to ${maxLayers} layers.`] });
 
   // One row per layer: the first take, then Layer 1, 2, 3, each with a tick for every hit. Every row is there from the
   // start (empty ones dashed), so the panel never grows and the kit never moves again; the next empty row says "Tap to
@@ -79,7 +85,7 @@ export function setupRecordingPanel(panel, recorder, maxLayers, showLayerHelp) {
       const empty = !recording && (row > layers || !state.hasRecording);
       const next = empty && canAdd && row === layers + 1;
       const hits = events.filter((event) => event.layer === row);
-      const ticks = hits.map((event) => `<i style="left:${((event.at / length) * 100).toFixed(2)}%"></i>`).join('');
+      const ticks = hits.map((event) => `<i data-role="${roleOf(event.id)}" style="left:${((event.at / length) * 100).toFixed(2)}%"></i>`).join('');
       const hintText = firstTake || 'Play the drums to fill this layer…';
       const hint = recording && !hits.length ? `<span class="row-hint">${hintText}</span>`
         : next ? '<span class="row-hint">Tap to add a layer</span>' : '';
@@ -100,7 +106,7 @@ export function setupRecordingPanel(panel, recorder, maxLayers, showLayerHelp) {
     const adding = state.mode === 'overdubbing';
     const empty = adding && !events.some((event) => event.layer === layers);
     part('.panel-meta').textContent = adding
-      ? `Recording layer ${layers}${empty ? ': play now' : '…'}`
+      ? `Recording layer ${layers}${empty ? ': play now' : ''}`
       : layers ? layerWord(layers) : 'No layers yet';
   }
 
@@ -150,13 +156,15 @@ export function setupRecordingPanel(panel, recorder, maxLayers, showLayerHelp) {
 
     showMeta(recorder.pattern());
     playback.render(state);
+    part('.panel-fold-text').textContent = state.layers ? `Layers · ${state.layers}` : 'Layers';
 
-    layer.classList.toggle('is-recording', adding);
     panel.classList.toggle('is-rec-live', busy || adding);
-    layer.disabled = busy || (full && !adding);
-    part('.layer-button .panel-button-text').textContent = adding ? 'Stop adding' : 'Add layer';
-    layer.setAttribute('aria-label', adding ? 'Stop adding the layer' : full ? `Add layer (the limit of ${maxLayers} is reached)` : 'Add a layer');
-    layer.title = full && !adding ? `Up to ${maxLayers} layers` : '';
+    panel.classList.toggle('is-taking', busy);
+    layer.disabled = busy || adding || full;
+    layer.setAttribute('aria-label', full ? `Add layer (the limit of ${maxLayers} is reached)` : 'Add a layer');
+    layer.title = full ? `Up to ${maxLayers} layers` : '';
+    stop.disabled = !busy && !adding;
+    stop.setAttribute('aria-label', adding ? 'Stop adding the layer' : 'Stop recording');
     undo.disabled = busy || state.layers === 0;
     del.disabled = busy;
     save.disabled = busy || adding;
@@ -170,6 +178,10 @@ export function setupRecordingPanel(panel, recorder, maxLayers, showLayerHelp) {
         { label: 'How layers work →', onClick: showLayerHelp });
     }
   }
+
+  // The toolbar's height, for the panel that floats over the crowd in Concert on upright phones (recording-panel-live.css).
+  const topbar = document.querySelector('.topbar');
+  new ResizeObserver(() => document.documentElement.style.setProperty('--topbar-bottom', `${topbar.offsetTop + topbar.offsetHeight}px`)).observe(topbar);
 
   render(state);
   return {

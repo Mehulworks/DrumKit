@@ -17,7 +17,7 @@ body.is-concert .kit-light {
 body.is-concert .kit-svg {
   position: relative;
   z-index: 1;
-  transform: scale(0.74);
+  transform: scale(0.68); /* small enough that the top cymbals stay below the stage lights */
   transform-origin: 50% 100%;
 }
 
@@ -179,6 +179,6 @@ body.is-concert .kit-svg {
 @media (orientation: portrait) {
   body.is-concert .kit-svg {
     transform-origin: 50% 50%;
-    transform: translateY(calc(var(--crowd-h, 0px) / 2)) scale(1.14);
+    transform: translateY(var(--kit-shift, calc(var(--crowd-h, 0px) / 2))) scale(1.14); /* --kit-shift: concert-mode.js */
   }
 }
