@@ -11,7 +11,10 @@ const CRASHES = new Set(['crashLeft', 'crashRight', 'splash']);
 const HYPE_HITS = 10; // hits within HYPE_WINDOW that get the crowd jumping
 const HYPE_WINDOW = 3000;
 const CHEER_AFTER = 1200; // quiet ms after a burst before the crowd cheers
-const CROWD_SHARE = 0.4; // upright screens: the crowd strip takes about this share of the kit area's height
+const CROWD_SHARE = 0.5; // upright screens: the crowd strip takes about this share of the kit area's height
+// Upright screens show the drawing from above its top edge (where the extra rows of people are) down to just below the
+// lighting truss, so the strip is full of people instead of empty stage floor.
+const TALL_VIEW = { top: -205, bottom: 330 };
 
 /**
  * @param {HTMLButtonElement} button the Concert button in the toolbar
@@ -38,12 +41,18 @@ export function setupConcertMode(button, kitArea) {
       return;
     }
     const area = kitArea.getBoundingClientRect();
-    const width = Math.min(1600, Math.max(900, (area.width * 900) / (CROWD_SHARE * area.height)));
-    view.setAttribute('viewBox', `${(1600 - width) / 2} 0 ${width} 900`);
+    const height = TALL_VIEW.bottom - TALL_VIEW.top;
+    const width = Math.min(1600, Math.max(900, (area.width * height) / (CROWD_SHARE * area.height)));
+    view.setAttribute('viewBox', `${(1600 - width) / 2} ${TALL_VIEW.top} ${width} ${height}`);
     view.setAttribute('preserveAspectRatio', 'xMidYMin meet');
-    kitArea.style.setProperty('--crowd-h', `${(area.width * 900) / width}px`);
+    kitArea.style.setProperty('--crowd-h', `${(area.width * height) / width}px`);
   }
-  portrait.addEventListener('change', fit);
+  // Turning the screen redraws the scene, with or without the extra rows of people.
+  portrait.addEventListener('change', () => {
+    if (!isOn()) return;
+    scene()?.remove();
+    attach();
+  });
   addEventListener('resize', fit);
   let recent = [];
   let cheerTimer = 0;
@@ -55,7 +64,7 @@ export function setupConcertMode(button, kitArea) {
   function attach() {
     if (!isOn() || scene()) return;
     kitArea.insertAdjacentHTML('afterbegin', `<svg class="concert-scene" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice"
-      aria-hidden="true">${concertScene()}</svg>`);
+      aria-hidden="true">${concertScene(portrait.matches)}</svg>`);
     scene().style.setProperty('--beat', `${(60 / settings.tempo).toFixed(3)}s`);
     fit();
   }

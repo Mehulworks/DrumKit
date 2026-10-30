@@ -67,8 +67,11 @@ const pools = () => ['#4d8dff', '#3ddc84', '#ff4fd8', '#fff1d6'].map((color, i) 
     <stop offset="1" style="stop-color: ${color}; stop-opacity: 0"/></radialGradient>
   <ellipse class="pool pool-${i}" cx="${380 + i * 280}" cy="${520 + (i % 2) * 140}" rx="230" ry="150" fill="url(#cs-pool-${i})"/>`).join('');
 
-/** The whole scene, in a 1600 × 900 drawing that fills the kit area. */
-export const concertScene = () => `
+/**
+ * The whole scene, in a 1600 × 900 drawing that fills the kit area.
+ * @param {boolean} [tall] upright screens: extra rows of people above the top edge (concert-mode.js shows them)
+ */
+export const concertScene = (tall = false) => `
   <defs>
     <linearGradient id="cs-venue" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#07070a"/><stop offset="0.3" stop-color="#0e0e13"/><stop offset="1" stop-color="#15151a"/>
@@ -79,7 +82,7 @@ export const concertScene = () => `
   </defs>
   <rect x="-800" y="-400" width="3200" height="1800" fill="url(#cs-venue)"/>
   <rect x="-800" y="285" width="3200" height="1200" fill="url(#cs-boards)"/>
-  ${crowd()}
+  ${crowd(tall)}
   <path d="M-800 226 H2400" stroke="#6b7076" stroke-width="5"/>
   ${Array.from({ length: 34 }, (_, i) => `<rect x="${-40 + i * 50}" y="220" width="4" height="12" fill="#6b7076"/>`).join('')}
   <rect x="-800" y="282" width="3200" height="6" fill="#2a2a30"/>

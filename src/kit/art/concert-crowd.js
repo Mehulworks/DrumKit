@@ -3,6 +3,8 @@
 // (picture signs, glow sticks, phone lights) plus a beach ball bouncing over them. Simple shapes, no faces drawn.
 
 const ROWS = [58, 116, 172]; // back to front
+// Upright screens add rows further back (above the drawing's top edge), so the crowd strip fills with people.
+const BACK_ROWS = [-174, -116, -58, 0];
 const SPACING = 58;
 const SHIRTS = ['#d6334a', '#f08a3c', '#2a9d8f', '#3f7bd6', '#e9c46a', '#8a4fe0', '#e0408e', '#25b88a', '#f25c2a', '#5bc0eb'];
 const HAIR = ['#1a1512', '#3b2a1e', '#5a4632', '#141414', '#7a5c3a', '#b58a4c', '#c8642f', '#e3c07a'];
@@ -85,10 +87,11 @@ function fan(x, y, random, index) {
   </g>`;
 }
 
-export function crowd() {
+/** @param {boolean} [tall] also draw the rows further back (upright screens) */
+export function crowd(tall = false) {
   const random = seeded(7);
   let index = 0;
-  const rows = ROWS.map((y, row) => {
+  const rows = (tall ? [...BACK_ROWS, ...ROWS] : ROWS).map((y, row) => {
     const people = [];
     for (let x = -20 + (row % 2) * (SPACING / 2); x < 1640; x += SPACING) {
       people.push(fan(Math.round(x + (random() - 0.5) * 14), Math.round(y + (random() - 0.5) * 10), random, index++));
