@@ -36,6 +36,9 @@ const ICON = {
     <rect x="${cx - s * 0.18}" y="${cy + s * 0.88}" width="${s * 0.36}" height="${s * 0.38}" rx="${s * 0.06}"/>`,
 };
 
+/** The line drawing of a piece (by id), centred on (cx, cy) at size s; for the Look card samples too. */
+export const gridIcon = (id, cx, cy, s) => (ICON[id] ?? ICON.tom1)(cx, cy, s);
+
 /** @param {{id: string, x: number, y: number, w: number, h: number, label: string, role: string, unit?: number}} pad unit:
  *   drawing units per screen pixel, so text and spacing stay the same size on every screen */
 export function drawGridPad({ id, x, y, w, h, rx = 16 * unit, inset, font = 14 * unit, showKey = true, label, role, key = '', unit = 1 }) {
@@ -67,6 +70,7 @@ export function drawGridPad({ id, x, y, w, h, rx = 16 * unit, inset, font = 14 *
   </radialGradient></defs>
   <rect class="pad-tile" data-role="${role}" x="${left}" y="${top}" width="${w}" height="${h}" rx="${rx}" stroke-width="${1.5 * unit}"/>
   <rect class="pad-tile-glow" x="${left}" y="${top}" width="${w}" height="${h}" rx="${rx}" fill="url(#pad-glow-${id})"/>
+  <rect class="pad-trim" x="${left + 6 * unit}" y="${top + 6 * unit}" width="${w - 12 * unit}" height="${h - 12 * unit}" rx="${Math.max(0, rx - 5 * unit)}" style="stroke-width:${1.5 * unit}"/>
   <g class="pad-tile-icon" data-role="${role}" stroke-width="${2.5 * unit}">${icon}</g>
   <rect class="pad-tile-bar" data-role="${role}" x="${left + pad}" y="${top + h - pad - 3 * unit}" width="${Math.min(40 * unit, w - pad * 2)}" height="${3 * unit}" rx="${1.5 * unit}"/>
   <text class="pad-tile-name" x="${left + pad}" y="${top + pad + font * 0.78}" font-size="${font}">${lines.map((line, i) => `<tspan x="${left + pad}" dy="${i ? 1.2 : 0}em">${line}</tspan>`).join('')}</text>`;

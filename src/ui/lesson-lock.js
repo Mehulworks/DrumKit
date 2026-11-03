@@ -1,8 +1,7 @@
-// Lesson lock: while a lesson is running (playing or step by step, not the Demo), the drums it does not use stay silent,
-// and a short note says which drums it uses, at most once every few seconds.
+// Lesson lock: while a lesson is running (playing or step by step, not the Demo), the drums it does not use stay silent
+// (a softer sound would read as the device's volume dropping), and every tap on one shows a short note saying which
+// drums the lesson uses (the same note again, never a pile). Between runs every drum plays as normal.
 import { showToast } from './toast.js';
-
-const NOTE_EVERY = 4000; // ms between notes
 
 /**
  * @param {() => boolean} running whether a lesson is being played right now
@@ -10,7 +9,6 @@ const NOTE_EVERY = 4000; // ms between notes
 export function createLessonLock(running) {
   let allowed = null; // the pad ids the open lesson uses
   let names = '';
-  let lastNote = 0;
 
   return {
     /**
@@ -25,14 +23,10 @@ export function createLessonLock(running) {
     clear() {
       allowed = null;
     },
-    /** True if this drum may play now; if not, shows the note (now and then). @param {string} id */
+    /** True if this drum may play now; if not, the note shows (again). @param {string} id */
     allows(id) {
       if (!allowed || allowed.has(id) || !running()) return true;
-      const now = performance.now();
-      if (now - lastNote > NOTE_EVERY) {
-        lastNote = now;
-        showToast(`This lesson uses only ${names}.`);
-      }
+      showToast(`This lesson only uses ${names}.`);
       return false;
     },
   };

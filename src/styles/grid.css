@@ -79,3 +79,56 @@ body.is-concert .pad-tile {
 .pad-tile-glow {
   pointer-events: none;
 }
+
+/* The small Pad grid pictures on the Kit and Look cards: the look's face comes from the picture, the border from the family. */
+.mini-tile {
+  stroke: var(--role);
+  stroke-width: 3;
+}
+
+/* A look on the tiles (pad-looks.js): the theme's lacquer as the face, an inner trim line, and names in white, which
+   the dark faces keep readable. On the Electronic kit the trim glows in the theme's LED colour. */
+.pad-trim {
+  display: none;
+  fill: none;
+  pointer-events: none;
+}
+
+.kit-svg.has-pad-look .pad-tile {
+  fill: url(#pad-face);
+}
+
+.pad-face-top { stop-color: var(--pad-top); }
+.pad-face-bottom { stop-color: var(--pad-bottom); }
+
+.kit-svg.has-pad-look .pad-trim {
+  display: inline;
+  stroke: var(--pad-trim);
+  opacity: 0.5;
+}
+
+.kit-svg.has-pad-look.is-electronic .pad-trim {
+  opacity: 0.95;
+  stroke-width: 2.5px;
+  filter: drop-shadow(0 0 4px var(--pad-led));
+}
+
+.kit-svg.has-pad-look .pad-tile-name {
+  fill: #fff;
+}
+
+/* Once per visit, a band of light sweeps across the whole pad grid (pad-motifs.js), so the eye lands on it. */
+.pad-shine {
+  transform-box: fill-box;
+  transform: translateX(-65%);
+  animation: pad-shine 1.6s ease-in-out 0.6s 1 both;
+  pointer-events: none;
+}
+
+@keyframes pad-shine {
+  to { transform: translateX(65%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pad-shine { display: none; }
+}

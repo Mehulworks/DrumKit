@@ -1,8 +1,9 @@
-// Lesson cue on the kit: the pad you should hit glows softly in saffron, peaking exactly at the moment to hit it (the
-// beat grid in the lesson bar shows what comes next). Gentle on purpose: a low glow that rises and falls, never a sharp
+// Lesson cue on the kit: the pad you should hit glows softly in its drum family's colour (as its dots in the beat grid),
+// peaking exactly at the moment to hit it (the beat grid in the lesson bar shows what comes next). Gentle on purpose: a low glow that rises and falls, never a sharp
 // flash, and none at all for reduced motion or with Flashing lights off. In step-by-step mode the pads to hit glow
 // steadily instead. Drawn in the effects layer; never takes clicks.
-import { getAudio } from '../audio/engine.js';
+import { getAudio, heardDelay } from '../audio/engine.js';
+import { roleOf } from './grid-layout.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const RISE = 0.06; // seconds the glow takes to rise to its peak
@@ -15,7 +16,7 @@ function glowShape(pad, attributes) {
     : { tag: 'ellipse', cx: pad.x, cy: pad.y, rx: pad.r ?? pad.w / 2, ry: pad.r ?? pad.h / 2 };
   const { tag, ...rest } = shape;
   const glow = document.createElementNS(SVG_NS, tag);
-  Object.entries({ ...rest, ...attributes }).forEach(([name, value]) => glow.setAttribute(name, String(value)));
+  Object.entries({ ...rest, 'data-role': roleOf(pad.id), ...attributes }).forEach(([name, value]) => glow.setAttribute(name, String(value)));
   return glow;
 }
 
@@ -35,7 +36,7 @@ export function createCues(svg, pads, allowed) {
       const pad = byId.get(id);
       if (!pad || !allowed()) return;
       const { context } = getAudio();
-      const ms = (time - RISE - context.currentTime + (context.outputLatency || 0)) * 1000;
+      const ms = (time - RISE - context.currentTime + heardDelay(context)) * 1000;
       const timer = setTimeout(() => {
         timers.delete(timer);
         const glow = glowShape(pad, { class: 'cue-glow' });

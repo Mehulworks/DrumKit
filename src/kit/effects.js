@@ -1,5 +1,7 @@
 // Hit effects on the art layer: ripples on a drum head where it was hit, a shimmer sweeping across a cymbal, and a
-// faint ring on the floor where a tap missed every drum.
+// faint ring on the floor where a tap missed every drum, and a grey ring on a drum the running lesson does not use. While recording, a live hit's ripple takes the drum family's
+// colour, like the marks it adds to the timeline.
+import { roleOf } from './grid-layout.js';
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const RIPPLE_MS = 520;
 const SHIMMER_MS = 520;
@@ -8,7 +10,7 @@ const SHIMMER_MS = 520;
  * @param {SVGSVGElement} svg the kit drawing (with an empty .kit-effects layer)
  * @param {Array<{id: string, art: string, x: number, y: number, r?: number}>} pads
  * @returns {{hit: (id: string, options?: {point?: {x: number, y: number}, playback?: boolean}) => void,
- *   floorTap: (point: {x: number, y: number}) => void}}
+ *   refuse: (id: string) => void, floorTap: (point: {x: number, y: number}) => void}}
  */
 export function createEffects(svg, pads) {
   const layer = svg.querySelector('.kit-effects');
@@ -71,10 +73,23 @@ export function createEffects(svg, pads) {
     hit(id, { point, playback = false } = {}) {
       const pad = byId.get(id);
       if (!(pad?.r || pad?.grid) || reduced.matches) return;
-      const color = playback ? getComputedStyle(document.documentElement).getPropertyValue('--color-playback').trim() : '#fff';
+      const recording = !playback && svg.closest('.kit')?.classList.contains('is-recording');
+      const color = playback ? getComputedStyle(document.documentElement).getPropertyValue('--color-playback').trim()
+        : recording ? getComputedStyle(document.documentElement).getPropertyValue(`--grid-${roleOf(id)}`).trim() || '#fff' : '#fff';
       if (pad.art === 'cymbal' || pad.art === 'hihat') return shimmer(pad, color);
       const at = (point && toDrawing(point)) || { x: pad.x, y: pad.y };
       ripple(pad, at, color);
+    },
+    // A drum the running lesson does not use (it stays silent): one grey ring, so the tap still feels heard.
+    refuse(id) {
+      const pad = byId.get(id);
+      if (!pad || reduced.matches) return;
+      const r = (pad.r ?? Math.min(pad.w, pad.h) / 2) * 0.6;
+      const ring = add('circle', { cx: pad.x, cy: pad.y, r, fill: 'none', stroke: '#9aa0a6', 'stroke-width': 2,
+        'vector-effect': 'non-scaling-stroke', class: 'effect-ring' }, pad);
+      if (!pad.r && !pad.grid) ring.removeAttribute('clip-path'); // no clip shape for this piece
+      ring.animate([{ transform: 'scale(0.6)', opacity: 0.6 }, { transform: 'scale(1)', opacity: 0 }],
+        { duration: 420, easing: 'ease-out' }).onfinish = () => ring.remove();
     },
     // A tap on the floor between drums: one faint ring, so the tap still feels answered.
     floorTap(point) {

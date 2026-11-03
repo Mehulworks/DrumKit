@@ -5,7 +5,7 @@ import { ICONS } from './icons.js';
 import { attachTooltip } from './tooltip.js';
 import { roleOf } from '../kit/grid-layout.js';
 import { confirmToast } from './confirm-toast.js';
-import { showTipOnce } from './tip.js';
+import { startTourOnce } from './tour.js';
 import { downloadRecording } from './download-recording.js';
 import { setupPanelPlayback } from './panel-playback.js';
 import { recordingPanelMarkup } from './recording-panel-markup.js';
@@ -13,7 +13,6 @@ import { createPanelCaret } from './panel-caret.js';
 import { markPositions, glideMarks } from './timeline-glide.js';
 
 const layerWord = (count) => (count === 1 ? '1 layer' : `${count} layers`);
-const formatTime = (seconds) => `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`;
 
 /**
  * Fills the panel and keeps it in step with the recorder.
@@ -21,7 +20,7 @@ const formatTime = (seconds) => `${Math.floor(seconds / 60)}:${String(Math.floor
  * @param {ReturnType<typeof import('../audio/recorder.js').createRecorder>} recorder
  * @param {number} maxLayers most layers allowed on top of the first take
  * @param {() => void} showLayerHelp opens the guide at the layers section
- * @returns {{render: (state: import('../audio/recorder.js').RecorderState) => void, fold: () => void}}
+ * @returns {{render: (state: import('../audio/recorder.js').RecorderState) => void, away: (on: boolean) => boolean}}
  */
 export function setupRecordingPanel(panel, recorder, maxLayers, showLayerHelp) {
   panel.innerHTML = recordingPanelMarkup();
@@ -33,6 +32,7 @@ export function setupRecordingPanel(panel, recorder, maxLayers, showLayerHelp) {
   const aimCaret = createPanelCaret(panel, () => document.querySelector('[data-transport=record]'));
   let closeAsk = () => {};
   let state = { mode: 'idle', loop: false, hasRecording: false, layers: 0 };
+  let away = false; // hidden while a lesson is open (the recording is kept)
   let showDeletedNote = false;
   let drawnVersion = -1;
   let drawnLength = 0;
@@ -56,6 +56,7 @@ export function setupRecordingPanel(panel, recorder, maxLayers, showLayerHelp) {
   });
   help.addEventListener('click', () => showLayerHelp());
   part('[data-panel=help-link]').addEventListener('click', () => showLayerHelp());
+  part('[data-panel=rec]').addEventListener('click', () => recorder.toggleRecord()); // the note after Delete
   fold.addEventListener('click', () => setFolded(!panel.classList.contains('is-folded')));
   part('.panel-close').addEventListener('click', () => {
     showDeletedNote = false;
@@ -101,13 +102,9 @@ export function setupRecordingPanel(panel, recorder, maxLayers, showLayerHelp) {
     showMeta({ events, length, layers });
   }
 
-  // "2 layers", or while adding: "recording layer 2…", with "play now" until its first hit. The length shows by Play.
-  function showMeta({ events, layers }) {
-    const adding = state.mode === 'overdubbing';
-    const empty = adding && !events.some((event) => event.layer === layers);
-    part('.panel-meta').textContent = adding
-      ? `Recording layer ${layers}${empty ? ': play now' : ''}`
-      : layers ? layerWord(layers) : 'No layers yet';
+  // "2 layers" (it stays put while recording: the Rec button shows the time, the row says what to do). The length shows by Play.
+  function showMeta({ layers }) {
+    part('.panel-meta').textContent = layers ? layerWord(layers) : 'No layers yet';
   }
 
   // Runs every animation frame while playing or recording: moves the playback line and adds new hits as they come.
@@ -125,8 +122,6 @@ export function setupRecordingPanel(panel, recorder, maxLayers, showLayerHelp) {
       drawnLength = pattern.length;
     }
     playback.showTime(status);
-    if (status.mode === 'counting') part('.panel-meta').textContent = 'Get ready…';
-    if (status.mode === 'recording') part('.panel-meta').textContent = `Recording… ${formatTime(status.elapsed)} / ${formatTime(status.limit)}`;
     const playing = status.mode === 'playing' || status.mode === 'overdubbing';
     // The moving line: the play position, or while recording the "now" point sweeping left to right.
     const taking = status.mode === 'recording';
@@ -147,7 +142,7 @@ export function setupRecordingPanel(panel, recorder, maxLayers, showLayerHelp) {
     // After Delete, the panel shrinks to a short note until a new recording starts or it is closed.
     if (hadRecording && !state.hasRecording) showDeletedNote = true;
     if (state.hasRecording || busy) showDeletedNote = false;
-    panel.hidden = !state.hasRecording && !showDeletedNote && !busy;
+    panel.hidden = away || (!state.hasRecording && !showDeletedNote && !busy);
     panel.classList.toggle('is-empty', !state.hasRecording && showDeletedNote);
     if (!state.hasRecording) {
       closeAsk();
@@ -172,10 +167,13 @@ export function setupRecordingPanel(panel, recorder, maxLayers, showLayerHelp) {
     tick();
     aimCaret();
 
-    // First recording ever: point at Add layer once.
+    // First recording ever: a short tour of what to do with it.
     if (!hadRecording && state.hasRecording && state.mode === 'idle') {
-      showTipOnce('layer', layer, `Tip: press <strong>Add layer</strong> to play more drums on top of your recording, or ${ICONS.download} to save it as a sound file.`,
-        { label: 'How layers work →', onClick: showLayerHelp });
+      startTourOnce('tour-recording', [
+        { target: () => part('[data-panel=play]'), text: 'Your take is saved. Press <strong>Play</strong> to hear it back; <strong>Pause</strong> keeps your place.' },
+        { target: () => layer, text: '<strong>Add layer</strong> plays your take and records what you play on top, like a second drummer. Up to 3 layers.' },
+        { target: () => save, text: `${ICONS.download} saves the whole recording as a sound file. Nothing is uploaded.` },
+      ]);
     }
   }
 
@@ -186,7 +184,24 @@ export function setupRecordingPanel(panel, recorder, maxLayers, showLayerHelp) {
   render(state);
   return {
     render,
-    /** Folds the panel to its one line (phones, while a lesson is open); the recording itself is kept. */
-    fold: () => { if (!panel.hidden && state.hasRecording) setFolded(true); },
+    /**
+     * Steps aside while a lesson is open: stops any recording, layer or playback (the take is kept) and hides; false
+     * brings it back. Returns true if a take or layer was stopped.
+     * @param {boolean} on
+     */
+    away(on) {
+      away = on;
+      let stopped = false;
+      if (on) {
+        const { mode } = recorder.status();
+        if (mode === 'counting' || mode === 'recording') recorder.toggleRecord();
+        else if (mode === 'overdubbing') recorder.toggleLayer();
+        if (recorder.status().mode === 'playing') recorder.togglePlay();
+        stopped = mode === 'recording' || mode === 'overdubbing';
+        showDeletedNote = false;
+      }
+      render(state);
+      return stopped;
+    },
   };
 }

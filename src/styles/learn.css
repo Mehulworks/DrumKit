@@ -51,7 +51,6 @@ body.is-focus .learn-panel:not([hidden]) {
 /* The beat grid: drum names on the left, one cell per step, a dot where to hit, and the sweeping line. */
 .beat-grid {
   --name: 3.6rem;
-  --lead: 0px; /* the READY strip is gone; the count-in shows in the info line and on the kit */
   position: relative;
   grid-area: grid;
   display: flex;
@@ -62,7 +61,7 @@ body.is-focus .learn-panel:not([hidden]) {
 
 .grid-row {
   display: grid;
-  grid-template-columns: var(--name) var(--lead) repeat(var(--steps), minmax(0, 1fr));
+  grid-template-columns: var(--name) repeat(var(--steps), minmax(0, 1fr));
   align-items: center;
   gap: 2px;
 }
@@ -96,57 +95,56 @@ body.is-focus .learn-panel:not([hidden]) {
   background: color-mix(in srgb, var(--color-text) 10%, transparent);
 }
 
+/* A step with a note: tinted in the drum family's colour (grid.css), with a bright dot, so it stands out from the
+   empty steps. */
+.grid-cell.has-note {
+  background: color-mix(in srgb, var(--role) 24%, transparent);
+}
+
 .grid-cell i {
   width: 0.5625rem;
   height: 0.5625rem;
   border-radius: 50%;
-  background: var(--color-accent);
+  background: var(--role, var(--color-accent));
+  box-shadow: 0 0 0.3rem color-mix(in srgb, var(--role) 55%, transparent);
+  transition: transform 0.12s ease-out, background-color 0.12s ease-out;
 }
 
-.grid-cell[data-verdict="onTime"] i { background: var(--color-good); }
+/* Under the line: the dot grows a little and brightens, and only for that step, so even a hi-hat on every step reads
+   as a calm chase rather than flashing. The count above lights too. */
+.grid-cell.is-now {
+  background: color-mix(in srgb, var(--role) 40%, transparent);
+}
+
+.grid-cell.is-now i {
+  transform: scale(1.3);
+  background: color-mix(in srgb, var(--role) 70%, #fff);
+}
+
+.grid-count.is-now {
+  color: var(--color-accent);
+}
+
+/* After a hit: a ring round the dot says how it went, so the family colour stays readable. */
+.grid-cell[data-verdict] i { box-shadow: 0 0 0 2px var(--color-surface), 0 0 0 4px var(--verdict); }
+.grid-cell[data-verdict="onTime"] i { --verdict: var(--color-good); }
 .grid-cell[data-verdict="early"] i,
-.grid-cell[data-verdict="late"] i { background: var(--color-warn); }
-.grid-cell[data-verdict="miss"] i { background: var(--color-bad); }
+.grid-cell[data-verdict="late"] i { --verdict: var(--color-warn); }
+.grid-cell[data-verdict="miss"] i { --verdict: var(--color-bad); opacity: 0.45; }
 
 .grid-playhead {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: calc(var(--name) + 2px + (var(--lead) + 2px) * var(--lead-in, 0) + (100% - var(--name) - var(--lead) - 0.25rem) * var(--progress, 0));
+  left: calc(var(--name) + 2px + (100% - var(--name) - 0.25rem) * var(--progress, 0));
   width: 2px;
   border-radius: 1px;
   background: var(--color-text);
   pointer-events: none;
 }
 
-.grid-lead {
-  height: 0.9375rem;
-  border-radius: 0.1875rem;
-  /* Fills with green from the left during the count-in. */
-  background: linear-gradient(90deg, var(--color-good) calc(var(--lead-fill, 0) * 100%), color-mix(in srgb, var(--color-text) 16%, transparent) 0);
-}
-
-.grid-lead-label {
-  color: var(--color-text-muted);
-  font-size: 0.625rem;
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-/* During the count-in the Ready box counts down: 4, 3, 2, 1. */
-.grid-lead-label.is-counting {
-  color: var(--color-accent);
-  font-family: var(--font-display);
-  font-size: 1.125rem;
-  line-height: 0.7;
-  letter-spacing: 0;
-}
-
-
-.grid-lead,
-.grid-lead-label {
-  display: none;
+.grid-playhead.is-waiting {
+  opacity: 0;
 }
 
 @media (max-width: 35em), (max-width: 60em) and (max-height: 30em) {

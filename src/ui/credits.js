@@ -1,13 +1,13 @@
 // Credits: "Made by Mehul with Claude." (the name links to the portfolio), shown small in the bottom-right
-// corner of the kit area, at the end of the ⋮ menu and in the guide's About section. The "Code & prompts" link appears once REPO_URL is set.
+// corner of the kit area, at the end of the ⋮ menu and in the guide's About section, with a "Code" link to the repository.
 import { ICONS } from './icons.js';
 import { version } from '../../package.json';
 
 const PORTFOLIO_URL = 'https://www.mehulvarshney.com/';
 const RELEASES_URL = 'https://github.com/Mehulworks/DrumKit/releases';
 const SHORT_VERSION = version.replace(/\.0$/, ''); // "2.2.0" shows as "v2.2", like the release tags
-const REPO_URL = ''; // paste the GitHub repository address here once it exists
-const REPO_LABEL = 'Code & prompts';
+const REPO_URL = 'https://github.com/Mehulworks/DrumKit'; // the public repository (empty hides the link)
+const REPO_LABEL = 'Code';
 
 const external = (href, className, text) =>
   `<a class="${className}" href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`;

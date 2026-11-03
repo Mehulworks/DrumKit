@@ -1,11 +1,12 @@
-// Lesson bar markup: the name and info line, the beat grid, the mode switch, Start, the extras (Demo, click, speed;
+// Lesson bar markup: the name and info line (it stays put during a run; progress is spoken from a hidden line), the beat grid, the mode switch, Start, the extras (Demo, click, speed;
 // a ⋮ dropdown on phones), the result buttons, and the corner with ⋮ and ✕.
 import { ICONS } from './icons.js';
 
 export const learnPanelMarkup = () => `
   <div class="learn-info">
     <p class="learn-title"></p>
-    <p class="learn-meta" aria-live="polite"></p>
+    <p class="learn-meta"></p>
+    <p class="visually-hidden" aria-live="polite" data-learn-status></p>
   </div>
   <div class="beat-grid"></div>
   <div class="learn-actions">
@@ -24,7 +25,7 @@ export const learnPanelMarkup = () => `
         <button type="button" class="learn-ghost" data-learn="faster" aria-label="Faster">+</button>
       </div>
     </div>
-    <button type="button" class="learn-secondary learn-next" data-learn="push" hidden>10% faster →</button>
+    <button type="button" class="learn-secondary learn-next" data-learn="push" hidden>Faster →</button>
     <button type="button" class="learn-secondary learn-next" data-learn="next" hidden>Next →</button>
   </div>
   <div class="learn-corner">

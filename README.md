@@ -1,36 +1,36 @@
 <!-- Project overview: what it is, how to run it, and the folder map. -->
-# Drum Kit Web
+# Drum Kit
 
 A browser drum kit with a top-down kit view, built with Vite, vanilla JavaScript and the Web Audio API. All sounds are synthesized in code; all artwork is drawn in code.
 
-Status: all 8 milestones done, plus kits and themes. Tap or click a pad (several fingers at once work), or press its key. Best in landscape.
+Status: version 3.0; every milestone in docs/PLAN.md is done. Tap or click a pad (several fingers at once work), or press its key. Best in landscape.
 
-- **Touch**: buttons drawn at 32px (one height everywhere) with an invisible ring that makes each tap area about 44px. Every saffron button has dark text (one colour, readable in both themes).
+- **Touch**: buttons drawn at 32px (one height everywhere); on touch screens an invisible ring round each small control makes its tap area about 40px, growing only into free space so it never reaches a neighbouring control (switches get a transparent border instead). Saffron buttons have dark text in the dark theme and white text on a deeper saffron in the light theme (at least 4.5:1 in both).
 - **Metronome**: switched on in the ⋮ menu (Metronome, with its tempo, active while on). While it runs, a metronome chip with a blinking beat light sits next to Rec; tap it to turn the metronome off.
 - **Phones**: one toolbar row: logo, a compact Drag + Tap switch (Hover is called Drag on touch screens: sliding a finger across the drums plays them), Rec, the metronome chip while it is on, Concert and Learn icons, ⋮.
-- **Phones and lessons**: the lesson bar shows a short info line and puts Demo, the click and the speed in a ⋮ dropdown; the recording panel folds during a lesson and floats over the crowd in Concert. On every screen, Learn and Concert take turns (opening a lesson pauses Concert, turning Concert on closes the lesson).
-- **Pad grid** (Customize → View, above the tabs: Drums | Pad grid): the chosen kit's drums and sounds as tiles grouped by role (cymbals, toms, hi-hats, snare and kick), each with a line drawing of the instrument, its key in the corner, and a backlight in its colour when hit; drawn to fit the kit area exactly (wide rows sideways, more rows upright). Recording, Learn, keys and Concert work the same; Look, Background and Sticks stay in Customize but are dimmed, with a note and a "Switch to Drum kit" button.
+- **One mode at a time** (every screen): Learn and Concert take turns (opening a lesson pauses Concert, turning Concert on closes the lesson), and so do Learn and Recording (pressing Rec closes the lesson; opening a lesson stops any recording, keeps the take and hides the recording panel until the lesson closes). On phones the lesson bar shows a short info line and puts Demo, the click and the speed in a ⋮ dropdown; in Concert the recording panel floats over the crowd.
+- **Pad grid** (Customize → View, above the tabs: Drums | Pad grid): the chosen kit's drums and sounds as tiles grouped by role (cymbals, toms, hi-hats, snare and kick), each with a line drawing of the instrument, a border in its family's colour, its key in the corner (not on phones), and a backlight in its colour when hit; one spacing system (even gaps, fixed corners and padding, a tighter set on phones); narrow screens always get the upright layout and long names wrap; drawn to fit the kit area exactly (wide rows sideways, more rows upright). Recording, Learn, keys and Concert work the same; Every Customize tab works here too: Backgrounds (the floor alone, scaled to fit), Sticks (they strike the tiles, kick included) and Looks (each theme's lacquer on the tiles with a trim line in its hoop colour, plus its own texture or emblem: dragon scales and a gold dragon tattoo, gothic filigree, wood grain and a burst finish, glitter, flames, a synthwave horizon, a night sky, a lacquer sheen; on the Electronic kit the trim glows in the theme's LED colour). In this view each Look card shows one sample pad in that look (the Kit cards show the kits). The Dragon look's gold dragon spreads across all the pads, and the first time the grid appears on a visit a soft band of light sweeps across it once. The view is chosen first, in a large Drums | Pad grid switch under the Customize title.
 - **Responsive**: sizes and spacing in rem (they follow the browser's text size), breakpoints in em: phones held sideways are caught by height (30em), compact width rules start at 45em, so upright tablets keep the full layout. On upright screens the kit zooms in a little on the drums.
 - **First visit**: Studio kit in the Hot Rod look on the wood floor, drumsticks shown (classic, black tape, silver chain), key names on computers only, volume 80%, dark mode. Every Reset returns to these.
-- **Customize** (drawer on the left edge, tabs Kit, EQ, Look, Background, Sticks; a Reset button resets the tab on show after a Cancel / Yes question). **Kit** tab: what you play, with its own sounds: **Studio** (full acoustic kit), **Electronic** (pads with glowing rings on a rack, electronic sounds) and **Jazz** (small acoustic kit, softer sounds). Same keys on every kit; keys for pieces a kit does not have do nothing.
+- **Customize** (drawer on the left edge, an icon-only tab on phones that steps aside while recording or in a lesson; tabs Kit, EQ, Look, Background, Sticks under the view switch and the "Show drumsticks" switch; a Reset button resets the tab on show after a Cancel / Yes question). **Kit** tab: what you play, with its own sounds: **Studio** (full acoustic kit), **Electronic** (pads with glowing rings on a rack, electronic sounds) and **Jazz** (small acoustic kit, softer sounds). Same keys on every kit; keys for pieces a kit does not have do nothing.
 - **Look** tab: themes that change only how the kit looks: Classic Studio, Dragon, Gothic, Neon Synthwave, Midnight, Hot Rod, Vintage Sunburst and Retro Sparkle. Each theme dresses the kit itself: shell colours, wraps and kick graphics, painted hoops, LED-lit heads, plus real-world accessories such as clip-on mics, sizzle chains and bead rattlers, a kick chain, vinyl stickers, gel pads, O-rings, tape, a snare wallet, coloured cymbal felts, glow tape, a hi-hat tambourine, charms, a towel and a stick bag. On the Electronic kit a theme colours the mesh heads, rims and cymbal edges, the module screen and pad lights, and adds tower stickers.
 - **Kit gear** (every look): stands under the cymbals and hi-hats with the hi-hat pedal, the drummer's stool, a tablet beside the hi-hat and spare sticks by the floor tom. Drawn under the drums and never tappable.
 - **Background** tab: Plain (faint music doodles and sketched props: a music stand, side table, guitar and amp), Wood floor, Concrete, Stage rug or Spotlight, chosen separately from the theme. Each has gentle moving light (window light, a light sweep, a lamp glow, dust in the spotlight) and props round the edges: a rehearsal room with an amp, mic stand, set list and a steaming mug; a loft studio with monitor speakers and a swaying plant; a lounge with a floor lamp, a spinning record player and a record crate; a stage with floor wedges, footlights and haze, the Spotlight footlights glow softly on hits, and a tap on the floor leaves a faint ring. All motion stops with reduced motion.
 - **Natural look and motion**: hammered cymbals, chrome reflections, worn heads, a soft stage light; drums thump with a ripple where you hit, cymbals wobble and shimmer, the kick beater swings, the hi-hat lifts and closes. Off when the device asks for reduced motion.
-- **Hover / Tap** switch: Tap plays a pad when pressed; Hover plays it as soon as the mouse or a sliding finger moves onto it.
-- **Record / Play / Loop**: **Rec** in the toolbar starts a **3, 2, 1** countdown in the middle of the screen (4, 3, 2, 1 with the metronome, quiet clicks without it), then records up to 2 minutes; Rec shows "■ Stop 0:12 / 2:00" (just "■ 0:12" on phones), and the recording panel shows "Recording… 0:12 / 2:00" and the first take filling in from left to right (the view grows 15 s → 30 s → 1 min → 2 min, marks gliding, each in its instrument family's colour). Under the layers, a red **Stop** ends the take or a layer and **Add layer** starts one; both are always there. **Play**, **Loop** and the play time sit at the top of the recording panel (Play is greyed while recording). Records **drums only** (no microphone). Kept in memory only; gone after a reload. A recording stays when you switch kits, so the same beat can play on another kit.
-- **Recording panel and layers**: a caret pointing up at Rec, a top row (title, then on the right the time, Play/Stop, Loop, Download and Delete icons, help), then a full-width timeline with every layer row there from the start (empty ones dashed, the next says "Tap to add a layer", so the panel never grows; up to 3; short labels Take, L1, L2, L3 on phones), and under it **Add layer** and **Undo layer** on the right. **Download** (saves the recording, all layers, as a stereo WAV file on your device; nothing is uploaded), **Delete** (click twice), fold.
+- **Hover / Tap** switch: Tap plays a pad when pressed; Hover (called Drag on touch screens) plays it as soon as the mouse or a sliding finger moves onto it.
+- **Record / Play / Loop**: **Rec** in the toolbar starts a **3, 2, 1** countdown in the middle of the screen (4, 3, 2, 1 with the metronome, quiet clicks without it), then records up to 2 minutes; Rec shows "■ Stop 0:12 / 2:00" (just "■ 0:12" on phones), the line under the panel's title stays put, and the first take fills in from left to right (the view grows 15 s → 30 s → 1 min → 2 min, marks gliding, each in its instrument family's colour). Under the layers, a red **Stop** ends the take or a layer and **Add layer** starts one; both are always there. **Play**, **Loop** and the play time sit at the top of the recording panel (Play is greyed while recording). Records **drums only** (no microphone). Kept in memory only; gone after a reload. A recording stays when you switch kits, so the same beat can play on another kit.
+- **Recording panel and layers**: a caret pointing up at Rec, a top row (title, then the time, **Play / Pause** (Pause keeps the place; icon only on phones), Loop, Download and Delete icons, help), then a full-width timeline with every layer row there from the start (empty ones dashed, the next says "Tap to add a layer", so the panel never grows; up to 3; short labels Take, L1, L2, L3 on phones), and under it **Stop**, **Add layer** and **Undo layer**. **Download** (saves the recording, all layers, as a stereo WAV file on your device; nothing is uploaded), **Delete** (asks first; afterwards a short note with a "How layers work →" link and a red **Rec** button to start a new one), fold (the folded bar shows "Layers · 2"). On upright phones the panel runs edge to edge.
 - **Metronome**: steady click with a beat light; tempo in Settings; 4-click count-in before recording.
 - **EQ** (Customize, EQ tab; the toolbar EQ button opens it): volume, preset chips (Normal, Rock, Pop, Jazz, Hip-Hop, Bass Boost) and Bass, Mid and Treble sliders.
-- **Sticks** (Customize, Sticks tab): optional drumsticks that strike and twirl: classic, nylon tip, rods, brushes, mallets or light-up, in six colours, with real-world accessories: grip tape or a rubber sleeve, a practice tip cover, a wrapped ball chain, a sticker, a wrist strap, keychain charm or ribbon, and a clip-on LED light. A look only; the sound stays the same.
+- **Sticks** (Customize, Sticks tab; the "Show drumsticks" switch sits at the top of the drawer, and while it is off the tab and its options are greyed): optional drumsticks that strike and twirl: classic, nylon tip, rods, brushes, mallets or light-up, in six colours, with real-world accessories: grip tape or a rubber sleeve, a practice tip cover, a wrapped ball chain, a sticker, a wrist strap, keychain charm or ribbon, and a clip-on LED light. A look only; the sound stays the same.
 - **Intro**: a short ba-dum-tss when the page loads. Most browsers allow sound only after a touch, so there it plays on your first touch, click or key press.
-- **Toolbar**: playing controls, **Learn** and **Concert** always visible with their names (Concert has a slowly moving gradient border), and a ⋮ **More** menu for EQ, Focus, light or dark, the settings, How to play and Reset all. First-time visitors get a one-time tip pointing to Learn and Concert.
+- **Toolbar**: playing controls, **Learn** and **Concert** always visible with their names (Concert has a slowly moving gradient border), and a ⋮ **More** menu for EQ, Focus, light or dark, the settings, How to play and Reset all. First-time visitors get a one-time tip pointing to Learn and Concert. One-time tips close on their own after 8 seconds; on upright phones they sit at the top, never over the drums.
 - **Focus mode**: the Focus button (or F) hides everything but the drums and asks for real fullscreen where the browser allows it; Esc, F or the faint ✕ leaves.
-- **Learn** (toolbar): a drawer with **Lessons** (8 step-by-step basics) and **Beats** (10 style grooves: disco, half-time, reggae one-drop, fast punk, hip-hop, shuffle, waltz in 3/4, funk, trap hi-hats, bossa nova), all written for this app. Two modes: **Step by step** (the beat waits until you hit each glowing drum) and **In time**. The lesson bar shows a beat grid with a line that crosses each dot at the moment to hit while the drum to hit glows; a scoreboard over the kit shows Perfect / Early / Late, the streak and the score; the grid's Ready box counts 4-3-2-1 before the first hit. Demo plays it first (the drumsticks play along); the drums a lesson uses are labelled with their name and key and the rest dimmed; the beat click can be switched off; lessons run at 60 to 70 BPM and beats start at 75% of their real tempo; speed 40 to 150%, remembered for each lesson, with a "10% faster" button after a pass; 80% on time passes (the bar shows the goal in hits, and the scoreboard a bar with the 80% mark); the lesson tip shows as a caption at the bottom; best scores are remembered.
-- **Concert mode** (every screen; on phones the kit shrinks less so it stays easy to tap; on upright screens the crowd is a strip along the top and the kit sits below it): the kit moves to the bottom and a crowd (bright shirts, picture signs, glow sticks, phone lights, a beach ball), a disco ball and stage lights appear behind it, all drawn in code; the crowd bobs to the tempo, raises hands on crashes, jumps when you play fast and cheers when you stop after a burst, and the stage flashes on the kick.
-- **Credits**: "Made by Mehul with Claude." (the name links to the portfolio) floating over the bottom-right corner of the kit on computers and tablets, white text on a faint dark backing (copyable), at the end of the ⋮ menu (under a divider with a music note, with the version linking to the release notes) and in the About section of How to play. A "Code & prompts" link appears once REPO_URL is set in src/ui/credits.js.
+- **Learn** (toolbar): a drawer with **Lessons** (8 step-by-step basics) and **Beats** (10 style grooves: disco, half-time, reggae one-drop, fast punk, hip-hop, shuffle, waltz in 3/4, funk, trap hi-hats, bossa nova), all written for this app. Two modes: **Step by step** (the beat waits until you hit each glowing drum) and **In time**. The lesson bar shows a beat grid with a line that crosses each dot at the moment to hit while the drum to hit glows in its family's colour; a scoreboard over the kit shows Perfect / Early / Late, the streak and the score. In the beat grid the steps with a note are tinted in their drum family's colour and the dots under the line light up briefly as it passes (only notes light, so busy rows stay calm). The bar's info line (speed and goal) stays the same during a run; progress is read out to screen readers instead. Demo plays it first (the drumsticks play along); the drums a lesson uses are labelled with their name and key on a solid badge (just the name on touch screens) and the rest dimmed; during a run the others stay silent, and each tap on one shows a grey ring and the note "This lesson only uses …"; the beat click can be switched off; lessons run at 60 to 70 BPM and beats start at 75% of their real tempo; speed in levels (50, 75, 100, 125 and 150%), remembered for each lesson, with "Replay at 125%" (the next level) after a pass; 80% on time passes (the bar shows the goal in hits, and the scoreboard a bar with the 80% mark); the lesson tip shows as a caption at the bottom with a ✕ to hide it; best scores are remembered. The count-in shows big in the middle of the kit; beat-grid dots take each drum family's colour; hits are timed from the tap itself, with one shared speaker-delay figure for the line, the glow and the scoring. After each run a small card in the middle of the kit offers the next step (Replay, Replay at the next speed level and Next lesson after a pass; Try at a lower level, Step by step or Try again otherwise), and Start becomes Replay. Start has a gentle saffron ring until the first run. The first lesson opened after a page load pulses the bar and offers a four-step tour (the beat grid, the modes, speed and the metronome click, then Start); the first recording offers one for the recording panel. Each step shows its number and ✕ at the top, then the tip, then "Don't show again" with Skip and the main button on the right. While recording, a live hit's ripple takes its drum family's colour.
+- **Concert mode** (every screen; on phones the kit shrinks less so it stays easy to tap; on upright phones the drum kit sits near the bottom with a bigger crowd filling the space above, and the Pad grid is laid out just below the lights; while recording on a phone the panel floats over the crowd, so no drum moves): the kit moves to the bottom and a crowd (bright shirts, picture signs, glow sticks, phone lights, a beach ball), a disco ball and stage lights appear behind it, all drawn in code; the crowd bobs to the tempo, raises hands on crashes, jumps when you play fast and cheers when you stop after a burst, and the stage flashes on the kick.
+- **Credits**: "Made by Mehul with Claude." (the name links to the portfolio) floating over the bottom-right corner of the kit on computers and tablets, white text on a faint dark backing (copyable), at the end of the ⋮ menu (under a divider with a music note, with the version linking to the release notes) and in the About section of How to play. A "Code" link beside it opens the GitHub repository.
 - **Page info**: title, description, favicon, home-screen icon and link-preview tags (Open Graph) in index.html, with the live address https://drummingkit.vercel.app/.
-- **Settings** (in the ⋮ menu): key names on pads (on by default), Flashing lights (stage lights that blink gently; never more than two light reactions a second, none with reduced motion), metronome tempo, Dark mode (a switch) and Reset all (asks with Cancel and Yes).
+- **Settings** (in the ⋮ menu): key names on pads (on by default with a keyboard), instrument names on Pad grid tiles (on by default; greyed in the drum kit view), Flashing lights (stage lights that blink gently; never more than two light reactions a second, none with reduced motion), metronome tempo, Dark mode (a switch) and Reset all (asks with Cancel and Yes).
 - **How to play**: an illustrated guide (layers first), "Try it" buttons, a keyboard map that follows the kit, and hover cards on desktop.
 - **Light / dark** look for the interface.
 
@@ -89,7 +89,7 @@ public/               files served as they are
 src/
   main.js             starts the app, mounts the chosen kit and theme, connects the parts
   styles.js           every stylesheet, in cascade order
-  learn-setup.js      connects lessons, the lesson bar, scoreboard, lesson lock and phone turns
+  learn-setup.js      connects lessons, the lesson bar, scoreboard, lesson lock, mode turns and the lesson tour
   audio/
     engine.js         shared audio context, master output, hit envelope
     intro.js          short ba-dum-tss intro on load (or on the first touch)
@@ -129,8 +129,8 @@ src/
     hit-areas.js      invisible hit areas and hit glow
     key-labels.js     key names shown on the pads
     motion.js         how pieces move when hit (thump, wobble, beater, hi-hat) and the entrance
-    effects.js        ripples on drum heads and shimmer on cymbals
-    cues.js           the soft glow on the pad to hit during a lesson
+    effects.js        ripples on drum heads, shimmer on cymbals, and the grey ring on a drum a lesson does not use
+    cues.js           the soft glow on the pad to hit during a lesson, in its drum family's colour
     lesson-focus.js   names and keys on the drums a lesson uses; the others dimmed
     sticks.js         optional drumsticks that strike and twirl (removable feature)
     kits/
@@ -173,6 +173,9 @@ src/
       cymbal.js       crash, splash and ride drawing
       hihat.js        hi-hat drawing (closed and open)
       gear.js         gear around the kit: cymbal and hi-hat stands, stool, tablet, spare sticks
+      pad-looks.js    the kit themes dressed onto the Pad grid tiles, and their card pictures
+      pad-motifs.js   each look's texture and emblem on the tiles (scales, dragon tattoo, flames, night sky...) and the one-time shine
+      dragon-art.js   the Dragon look's coiled gold dragon tattoo across the Pad grid
       grid-pad.js     one Pad grid tile: corner glow, line drawing of the instrument, colour bar and name
       electronic.js   electronic pads, cymbal pads, kick tower, module, cables, headphones
   ui/
@@ -195,23 +198,25 @@ src/
     concert-mode.js   Concert mode: crowd reactions, on every screen
     flash-lights.js   decides when lights may react to hits: at most twice a second, never with reduced motion or the setting off
     toast.js          short messages that fade away, and one-time notices with a close button
-    phone-turns.js    Learn and Concert take turns; on phones the recording panel folds during a lesson
+    phone-turns.js    one mode at a time: Learn takes turns with Concert and with Recording
     learn-extras.js   the lesson bar's ⋮ dropdown on phones (Demo, click, speed)
-    lesson-lock.js    during a running lesson, drums it does not use stay silent (with a short note)
+    lesson-lock.js    during a running lesson, drums it does not use stay silent (with a short note on each tap)
     rotate-notice.js  one-time "turn your phone sideways" notice on upright phones
     confirm-toast.js  asks before a reset, delete or replace, in a popup below the button (Cancel / Yes)
     more-menu.js      the ⋮ menu with EQ, Focus, light or dark, settings, How to play (keyboard-friendly)
     focus-mode.js     Focus mode: just the drums, fullscreen where allowed
-    credits.js        credit lines, portfolio link and the code & prompts link (both addresses set here)
+    credits.js        credit lines, the portfolio link and the Code link to the repository (both addresses set here)
     learn-panel.js    the lesson bar (beat grid, Demo, Start, speed, result)
     learn-caption.js  the lesson tip at the bottom of the screen, with a close button
+    learn-result.js   the result card after a run (Next lesson, Replay, a speed level...)
     learn-panel-markup.js  the lesson bar's HTML
-    learn-texts.js    the lesson bar's messages (goal, progress, results)
+    learn-texts.js    the lesson bar's messages (goal, progress, results) and the result card's words and buttons
     beat-grid.js      the drum-machine grid with the sweeping line and coloured dots
     learn-hud.js      the scoreboard over the kit and the big count-in
     learn-drawer.js   the Learn drawer: Lessons and Beats tabs with difficulty, speed and best scores
     tooltip.js        explanation card on mouse hover (desktop only)
-    tip.js            one-time tip shown after the first recording
+    tip.js            one-time tip under a button (the pointer to Learn and Concert)
+    tour.js           one-time tours of the lesson bar and the recording panel, with Skip
     eq-panel.js       EQ tab in Customize: volume, preset chips and sliders
     menu-settings.js  settings in the ⋮ menu: key names, Flashing lights, tempo, Reset all
     drawer.js         shared open / close behaviour for panels
@@ -239,7 +244,8 @@ src/
     menu-settings.css  the settings rows inside the ⋮ menu (switches, Metronome, tempo)
     focus.css         Focus mode: hides the rest and shows the ✕
     credits.css       the credit line in the bottom-right corner and at the end of the ⋮ menu
-    kit-drawer.css    the Customize tab and drawer, tabs, hint, cards and EQ panel
+    kit-drawer.css    the Customize tab and drawer, hint, cards and EQ panel
+    customize-tabs.css  Customize's Reset button, Drums | Pad grid switch and the drawer tab bar
     help.css          guide layout, step cards, Try it buttons
     help-visuals.css  the guide's live pictures of the UI
     keyboard-map.css  the guide's keyboard map
@@ -250,9 +256,12 @@ src/
     learn-small.css   the Learn bar on tablets and phones
     learn-buttons.css the Learn bar buttons and step-by-step mode
     learn-lesson.css  drum labels, goal bar and tip caption during a lesson
+    learn-result.css  the result card, confetti, the ripple on Start and the outlined Replay
     learn-extras.css  Demo, click and speed: on the bar, or a ⋮ dropdown on phones; the short info line
     tooltip.css       hover card, swinging metronome picture, one-time tip
+    tour.css          the tour steps, the ring on the control, the lesson bar's first pulse
     kit.css           kit area, key names and hit areas
     grid.css          the Pad grid tiles and role colours
     drawer.css        panels, chips, sliders and switches
+    touch.css         touch screens: invisible tap rings that make small controls about 40px
 ```

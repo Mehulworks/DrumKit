@@ -4,7 +4,7 @@
 // card changes the kit on stage straight away; choices and the last tab used are remembered between visits.
 import { ICONS } from './icons.js';
 import { createDrawer } from './drawer.js';
-import { kitPreview } from './kit-previews.js';
+import { kitPreview, gridPreview } from './kit-previews.js';
 import { THEMES, getTheme } from '../kit/art/themes.js';
 import { KITS, getKit } from '../kit/kits/index.js';
 import { settings, saveSettings, DEFAULTS } from './storage.js';
@@ -48,8 +48,8 @@ export function setupKitDrawer(button, panel, { onTheme, onKit, onView, onReset 
   </div>
   <div class="kit-view-switch" role="radiogroup" aria-labelledby="kit-view-label">
     <span class="kit-view-label" id="kit-view-label">View</span>
-    <label><input type="radio" name="kit-view" data-view="kit" value="kit"><span>Drums</span></label>
-    <label><input type="radio" name="kit-view" data-view="grid" value="grid"><span>Pad grid</span></label>
+    <label><input type="radio" name="kit-view" data-view="kit" value="kit">${ICONS.drum}<span>Drums</span></label>
+    <label><input type="radio" name="kit-view" data-view="grid" value="grid">${ICONS.grid}<span>Pad grid</span></label>
   </div>
   <div class="segmented kit-tabs" role="tablist" aria-label="Customize">
     <button type="button" role="tab" data-tab="kits">${ICONS.drum}<span>Kit</span></button>
@@ -61,7 +61,7 @@ export function setupKitDrawer(button, panel, { onTheme, onKit, onView, onReset 
   </div>
   <p class="kit-hint"></p>
   <div class="kit-grid-note" hidden>
-    <p>Look, Background and Sticks are for the drawn drums, so they are off in the Pad grid.</p>
+    <p>Looks are for the drawn drums, so they are off in the Pad grid. Backgrounds and sticks work in both.</p>
     <button type="button" class="text-button" data-view-switch="kit">${ICONS.drum}<span>Switch to Drums</span></button>
   </div>
   <div class="kit-cards" data-panel="kits" role="tabpanel"></div>
@@ -71,8 +71,8 @@ export function setupKitDrawer(button, panel, { onTheme, onKit, onView, onReset 
   <div class="stick-options slider-group" data-panel="sticks" role="tabpanel"></div>`;
   panel.classList.add('drawer-left', 'drawer-wide');
 
-  // The Pad grid has no theme art, floor or sticks: those tabs stay (dimmed), and opening one says why, with a way back.
-  const LOOK_TABS = ['themes', 'backdrop', 'sticks'];
+  // Every tab works in both views now (Looks dress the Pad grid's tiles too), so nothing is dimmed.
+  const LOOK_TABS = [];
   function showView() {
     const grid = settings.view === 'grid';
     const lookTab = LOOK_TABS.includes(settings.customizeTab);
@@ -86,6 +86,7 @@ export function setupKitDrawer(button, panel, { onTheme, onKit, onView, onReset 
     settings.view = view;
     saveSettings();
     showView();
+    refresh(); // the Kit cards preview the chosen view
     onView(settings.view);
   }
   panel.querySelector('.kit-view-switch').addEventListener('change', (event) => {
@@ -98,14 +99,15 @@ export function setupKitDrawer(button, panel, { onTheme, onKit, onView, onReset 
     const kit = getKit(settings.kit);
     const theme = getTheme(settings.kitTheme);
     panel.querySelector('.kit-cards[data-panel=themes]').innerHTML =
-      THEMES.map((item) => card('theme', item, item.id === theme.id, kitPreview(kit, item))).join('');
+      THEMES.map((item) => card('theme', item, item.id === theme.id, settings.view === 'grid' ? gridPreview(kit, item) : kitPreview(kit, item))).join('');
     panel.querySelector('.kit-cards[data-panel=kits]').innerHTML =
-      KITS.map((item) => card('kit', item, item.id === kit.id, kitPreview(item, theme))).join('');
+      KITS.map((item) => card('kit', item, item.id === kit.id, kitPreview(item, theme))).join(''); // the pieces, in either view
   }
 
   function showTab(id) {
     const tab = HINTS[id] ? id : 'kits';
     panel.querySelectorAll('[data-tab]').forEach((t) => t.setAttribute('aria-selected', String(t.dataset.tab === tab)));
+    panel.querySelector(`[data-tab=${tab}]`)?.scrollIntoView({ block: 'nearest', inline: 'nearest' }); // phones: keep the chosen tab in view
     panel.querySelectorAll('[data-panel]').forEach((p) => { p.hidden = p.dataset.panel !== tab; });
     panel.querySelector('.kit-hint').textContent = HINTS[tab];
     settings.customizeTab = tab;

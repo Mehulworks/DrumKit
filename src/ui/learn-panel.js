@@ -1,6 +1,6 @@
 // Lesson bar: under the toolbar while you practise a lesson or style beat: its name and tip, the beat grid, a mode
 // switch (In time keeps time; Step by step waits for you), Demo (loops until stopped), Start (the main button), and
-// quieter controls for the click and the speed (remembered for each lesson), then the result (with 10% faster and
+// quieter controls for the click and the speed (remembered for each lesson), then the result (with the next speed level and
 // Next). Lessons and beats are picked in the Learn drawer; best scores are remembered in this browser.
 import { ICONS, METRONOME_PICTURE } from './icons.js';
 import { attachTooltip } from './tooltip.js';
@@ -9,9 +9,12 @@ import { setupLearnExtras } from './learn-extras.js';
 import { learnPanelMarkup } from './learn-panel-markup.js';
 import * as text from './learn-texts.js';
 import { createLearnCaption } from './learn-caption.js';
+import { createCountdown } from './countdown.js';
+import { createLearnResult } from './learn-result.js';
 import { settings, saveSettings } from './storage.js';
 
-const SPEEDS = [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5];
+// Speed levels: big enough steps to feel the difference (− and + in the bar, and the result card, move between them).
+const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5];
 
 /**
  * @param {HTMLElement} panel the empty lesson bar
@@ -25,6 +28,18 @@ export function setupLearnPanel(panel, player) {
   attachTooltip(panel.querySelector('[data-learn=click]'), { title: 'Metronome click', picture: METRONOME_PICTURE,
     lines: ['A tick on every beat while the lesson plays, to keep you in time.', 'Tap to turn it off or on.'] });
   const grid = createBeatGrid(part('.beat-grid'));
+  const countdown = createCountdown(); // the count-in, big in the middle of the kit, as before a recording
+  // After a run: a card in the middle of the kit with what to do next (the bar itself never grows extra buttons).
+  const result = createLearnResult((action) => {
+    if (action === 'slower') setSpeed(SPEEDS[Math.max(0, SPEEDS.indexOf(speed) - 1)]);
+    if (action === 'faster') setSpeed(SPEEDS[Math.min(SPEEDS.length - 1, SPEEDS.indexOf(speed) + 1)]);
+    if (action === 'steps' || action === 'time') { mode = action === 'steps' ? 'steps' : 'time'; showMode(); }
+    if (action === 'next') { item = list[Math.min(list.length - 1, index() + 1)]; finished = false; passedRun = false; showItem(); setPlaying(false); part('[data-learn=start]').classList.add('is-cue'); return; }
+    showItem();
+    part('[data-learn=start]').click(); // replay, slower, faster, steps and time all go straight into a run
+  });
+  let finished = false; // a run has ended since this lesson was shown: Start reads Replay
+  let passedRun = false; // the last run passed
   setupLearnExtras(panel); // the ⋮ dropdown on phones
   const caption = createLearnCaption(); // the lesson's tip at the bottom of the screen
   let item = null;
@@ -48,8 +63,10 @@ export function setupLearnPanel(panel, player) {
     playing = on;
     demoRun = on && demo;
     const start = part('[data-learn=start]');
-    start.innerHTML = on && !demo ? `${ICONS.stop}<span>Stop</span>` : `${ICONS.play}<span>Start</span>`;
+    start.innerHTML = on && !demo ? `${ICONS.stop}<span>Stop</span>` : finished ? `${ICONS.replay}<span>Replay</span>` : `${ICONS.play}<span>Start</span>`;
     start.classList.toggle('is-playing', on && !demo);
+    start.classList.toggle('is-replay', !on && passedRun); // after a pass, Next lesson is the main action, so Replay steps back
+    if (on) start.classList.remove('is-cue'); // the "press me" ring stops once a run starts
     const demoButton = part('[data-learn=demo]');
     demoButton.disabled = on && !demo;
     demoButton.innerHTML = demoRun ? `${ICONS.stop}<span class="panel-button-text">Stop demo</span>`
@@ -79,6 +96,8 @@ export function setupLearnPanel(panel, player) {
     player.focus(item);
   }
   function stopAll() {
+    result.hide();
+    countdown.count(null);
     player.stop();
     grid.stop();
     setPlaying(false);
@@ -100,6 +119,7 @@ export function setupLearnPanel(panel, player) {
       caption.hide();
       closeListener();
     } else if (action === 'start') {
+      part('[data-learn=start]').classList.remove('is-cue');
       // Start during a demo ends the demo and starts your run; during your run it means Stop.
       if (playing && !demoRun) {
         stopAll();
@@ -132,7 +152,7 @@ export function setupLearnPanel(panel, player) {
       setSpeed(SPEEDS[Math.min(SPEEDS.length - 1, Math.max(0, at))]);
       showItem();
     } else if (action === 'push') {
-      // After a pass: 10% faster, straight into the next run.
+      // After a pass: the next speed level, straight into the next run.
       setSpeed(SPEEDS[Math.min(SPEEDS.length - 1, SPEEDS.indexOf(speed) + 1)]);
       showItem();
       grid.reset();
@@ -152,9 +172,14 @@ export function setupLearnPanel(panel, player) {
       item = chosen;
       list = chosenList;
       label = chosenLabel;
-      speed = SPEEDS.includes(settings.learnSpeeds[chosen.id]) ? settings.learnSpeeds[chosen.id] : 1;
+      const saved = settings.learnSpeeds[chosen.id] ?? 1; // older versions saved 10% steps: snap to the nearest level
+      speed = SPEEDS.reduce((best, level) => (Math.abs(level - saved) < Math.abs(best - saved) ? level : best), 1);
       showMode();
+      finished = false;
+      passedRun = false;
       showItem();
+      setPlaying(false);
+      part('[data-learn=start]').classList.add('is-cue'); // a gentle ring until the first Start or Demo
       panel.hidden = false;
       caption.show();
     },
@@ -170,29 +195,37 @@ export function setupLearnPanel(panel, player) {
     },
     update({ demo, counting, streak = 0, score = 0, step, done = 0, total = 0 }) {
       if (step) {
-        part('.learn-meta').textContent = text.step(done, total);
+        part('[data-learn-status]').textContent = text.step(done, total);
         return;
       }
-      part('.learn-meta').textContent = text.progress({ demo, counting, streak, score });
+      part('[data-learn-status]').textContent = text.progress({ demo, counting, streak, score });
+      countdown.count(counting || null);
     },
     /** End of a step-by-step run. */
     finishSteps({ wrong }) {
+      finished = true;
       setPlaying(false);
-      part('.learn-meta').textContent = text.stepsDone(wrong);
+      part('[data-learn-status]').textContent = text.stepsDone(wrong);
+      result.show(text.stepsCard(wrong));
     },
     finish({ score, best, passed, early, demo }) {
       setPlaying(false);
       if (demo) {
-        part('.learn-meta').textContent = text.yourTurn(mode);
+        part('[data-learn-status]').textContent = text.yourTurn(mode);
         return;
       }
       if (score > (settings.lessons[item.id] ?? 0)) {
         settings.lessons[item.id] = score;
         saveSettings();
       }
-      part('.learn-meta').textContent = text.result({ passed, early, score, best });
-      part('[data-learn=next]').hidden = !passed || index() === list.length - 1;
-      part('[data-learn=push]').hidden = !passed || speed >= SPEEDS[SPEEDS.length - 1];
+      finished = true;
+      passedRun = passed && index() < list.length - 1;
+      setPlaying(false);
+      part('[data-learn-status]').textContent = text.result({ passed, early, score, best });
+      const level = SPEEDS.indexOf(speed);
+      result.show(passed
+        ? text.passCard({ score, best, last: index() === list.length - 1, faster: SPEEDS[level + 1] ?? null })
+        : text.failCard({ score, slower: level > 0 ? SPEEDS[level - 1] : null }));
     },
   };
 }

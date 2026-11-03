@@ -2,7 +2,7 @@
 // a click on every beat. It books a cue for each note, judges your hits (allowing for the speakers' delay) and reports
 // live stats and a final result. A demo run plays the pattern itself, looping until stopped, so you can hear it first. The
 // beat clicks can be switched off; the count-in clicks always play. A run stops as soon as the pass is locked in.
-import { getAudio } from '../audio/engine.js';
+import { getAudio, heardDelay, eventAudioTime } from '../audio/engine.js';
 import { playClick } from '../audio/metronome.js';
 import { startScheduler } from '../audio/scheduler.js';
 import { createJudge } from './judge.js';
@@ -27,7 +27,7 @@ export function createLessonPlayer(hooks) {
   let clickOn = true; // the beat clicks (the count-in always clicks); can change while a run plays
 
   // Speakers and Bluetooth add a delay: you hear (and answer) a click a little after it is booked.
-  const delay = (context) => context.outputLatency || context.baseLatency || 0;
+  const delay = heardDelay;
 
   function stop() {
     stopScheduler?.();
@@ -98,11 +98,15 @@ export function createLessonPlayer(hooks) {
       clickOn = on;
     },
     isRunning: () => running,
-    /** A hit on a pad during a run; judged against the notes, then shown. */
-    hit(pad) {
+    /**
+     * A hit on a pad during a run; judged against the notes, then shown.
+     * @param {string} pad @param {number} [eventTime] the tap or key press's timeStamp
+     */
+    hit(pad, eventTime) {
       if (!judge) return;
       const { context } = getAudio();
-      const result = judge.hit(pad, context.currentTime - delay(context));
+      const at = eventAudioTime(context, eventTime) - delay(context);
+      const result = judge.hit(pad, at);
       if (result) hooks.feedback(pad, result.verdict, result.note.step);
     },
   };

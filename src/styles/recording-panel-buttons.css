@@ -166,3 +166,21 @@
   margin-top: 0.25rem;
   font-size: 0.875rem;
 }
+
+/* Rec in the note after Delete: red like the toolbar's Rec while recording, with a white dot. */
+.panel-rec-button {
+  display: none;
+  grid-area: rec;
+  gap: 0.4rem;
+  border-color: var(--color-record-fill);
+  background: var(--color-record-fill);
+  color: #fff;
+  font-weight: 600;
+}
+
+.panel-rec-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: #fff;
+}

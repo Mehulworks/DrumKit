@@ -1,5 +1,5 @@
 // Countdown: big numbers (3, 2, 1, or 4 to 1 with the metronome) in the middle of the kit area, a little above centre,
-// before a recording, then a short red "REC" flash as recording starts. It never takes clicks, so the drums still play under it.
+// before a recording (then a short red "REC" flash as recording starts) and before a lesson. It never takes clicks, so the drums still play under it.
 const REC_FLASH = 700; // ms the "REC" flash stays
 
 export function createCountdown() {
@@ -48,6 +48,17 @@ export function createCountdown() {
         flashTimer = setTimeout(() => { box.hidden = true; }, REC_FLASH);
       } else if (status.mode !== 'recording' && shown !== null) {
         if (shown !== 'rec') box.hidden = true; // cancelled during the count
+        shown = null;
+      }
+    },
+    /** A lesson's count-in: shows each new number; 0 or null hides it. @param {number | null} n */
+    count(n) {
+      if (!box.hidden) place();
+      if (n) {
+        if (shown !== n) show(String(n), 'is-number');
+        shown = n;
+      } else if (shown !== null) {
+        box.hidden = true;
         shown = null;
       }
     },

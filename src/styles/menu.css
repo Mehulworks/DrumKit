@@ -112,8 +112,8 @@
   font-size: 0.75rem;
 }
 
-/* Touch screens: toolbar buttons are drawn at 32px, and an invisible ring around each (and around the recording
-   panel's buttons) makes the tap area about 44px, the size fingers need. Menu rows stay a comfortable 44px. */
+/* Touch screens: toolbar buttons are drawn at 32px (their invisible tap rings are in touch.css). Menu rows stay a
+   comfortable 44px. */
 @media (pointer: coarse) {
   .topbar .icon-button {
     min-width: 2rem;
@@ -123,24 +123,6 @@
   .more-menu .icon-button {
     min-width: 2.75rem;
     min-height: 2.75rem;
-  }
-
-  .topbar .icon-button,
-  .metronome-button,
-  .record-button,
-  .panel-button,
-  .panel-fold {
-    position: relative;
-  }
-
-  .topbar .icon-button::after,
-  .metronome-button::after,
-  .record-button::after,
-  .panel-button::after,
-  .panel-fold::after {
-    content: "";
-    position: absolute;
-    inset: -0.375rem;
   }
 }
 

@@ -1,14 +1,12 @@
-// Mode turns: Learn and Concert take turns on every screen, since a lesson needs focus and Concert is all lights and
-// crowd. Opening a lesson pauses Concert (it comes back when the lesson closes); turning Concert on closes the lesson.
-// On a phone, opening a lesson also folds the recording panel to one line (the recording is kept), so the pads keep
-// their room.
+// Mode turns: one mode at a time, on every screen. Learn and Concert take turns, since a lesson needs focus and Concert
+// is all lights and crowd: opening a lesson pauses Concert (it comes back when the lesson closes); turning Concert on
+// closes the lesson. Learn and Recording take turns too, since a take only keeps your own hits and stops at its time
+// limit: pressing Rec closes the lesson, and opening a lesson stops any recording (the take is kept) and hides the
+// recording panel until the lesson closes.
 import { showToast } from './toast.js';
 
-const PHONE = '(max-width: 35em), (max-width: 60em) and (max-height: 30em)';
-const phone = matchMedia(PHONE);
-
 /**
- * @param {{concert: {setOn: (on: boolean) => void, isOn: () => boolean}, panel: {fold: () => void},
+ * @param {{concert: {setOn: (on: boolean) => void, isOn: () => boolean}, panel: {away: (on: boolean) => boolean},
  *   lessonOpen: () => boolean, closeLesson: () => void}} parts
  */
 export function setupPhoneTurns({ concert, panel, lessonOpen, closeLesson }) {
@@ -24,7 +22,7 @@ export function setupPhoneTurns({ concert, panel, lessonOpen, closeLesson }) {
 
   return {
     lessonOpened() {
-      if (phone.matches) panel.fold();
+      if (panel.away(true)) showToast('Recording stopped and kept.');
       if (concert.isOn()) {
         switching = true;
         concert.setOn(false);
@@ -34,9 +32,16 @@ export function setupPhoneTurns({ concert, panel, lessonOpen, closeLesson }) {
       }
     },
     lessonClosed() {
+      panel.away(false);
       if (!concertPaused) return;
       concertPaused = false;
       concert.setOn(true);
+    },
+    /** Rec was pressed: an open lesson closes. */
+    recordingStarted() {
+      if (!lessonOpen()) return;
+      closeLesson();
+      showToast('Lesson closed for recording.');
     },
   };
 }

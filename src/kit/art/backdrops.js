@@ -40,6 +40,18 @@ export function applyBackdrop(svg, id) {
     art.prepend(layer);
   }
   const backdrop = find(id);
+  const grid = svg.classList.contains('is-grid');
+  svg.dataset.backdrop = backdrop.id;
+  // The Pad grid: the floor alone (props would sit under the tiles), scaled to cover the grid's own shape.
+  if (grid) {
+    const { width, height } = svg.viewBox.baseVal;
+    const scale = Math.max(width / 1600, height / 900);
+    const floor = backdrop.id === 'plain' ? backdrop.draw('bd') : backdrop.draw('bd') + fade('bd');
+    layer.innerHTML = `<g transform="translate(${(width - 1600 * scale) / 2} ${(height - 900 * scale) / 2}) scale(${scale})">${floor}</g>`;
+    const atmosphere = svg.parentElement?.querySelector('.kit-atmosphere');
+    if (atmosphere) atmosphere.innerHTML = '';
+    return;
+  }
   layer.innerHTML = backdrop.id === 'plain' ? backdrop.draw('bd') : backdrop.draw('bd') + fade('bd') + (PROPS[backdrop.id]?.() ?? '');
   const atmosphere = svg.parentElement?.querySelector('.kit-atmosphere');
   if (atmosphere) {

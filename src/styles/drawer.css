@@ -115,6 +115,11 @@
   cursor: pointer;
 }
 
+/* Only the switch itself takes the click, not the whole row. */
+.toggle-row.is-switch-only {
+  cursor: default;
+}
+
 /* On/off switches: a sliding toggle (the knob is a gradient that moves from left to right). */
 .toggle-row input {
   flex: none;
@@ -172,4 +177,16 @@
   .slider-row {
     row-gap: 0;
   }
+}
+
+/* Sticks hidden: their options grey out and wait (the switch above stays live). */
+.is-sticks-off > * {
+  opacity: 0.4;
+  pointer-events: none;
+  filter: grayscale(0.6);
+}
+
+/* The drumsticks switch at the top of the Customize drawer, under the view switch. */
+.sticks-switch {
+  padding: 0.25rem 0.125rem;
 }

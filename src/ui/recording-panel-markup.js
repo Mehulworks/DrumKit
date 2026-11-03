@@ -1,5 +1,5 @@
 // Recording panel markup: the title and status, the player, Download / Delete / help, the layer timeline, Add layer and
-// Undo, the fold button and the close button of the note after Delete.
+// Undo, the fold button, and the note after Delete with its Rec and close buttons.
 import { ICONS } from './icons.js';
 
 export const recordingPanelMarkup = () => `
@@ -8,7 +8,8 @@ export const recordingPanelMarkup = () => `
     <p class="panel-meta"></p>
   </div>
   <div class="panel-playback" role="group" aria-label="Playback"></div>
-  <p class="panel-empty-text">Recording deleted. Press <strong>● Rec</strong> to start a new one.<br><button type="button" class="coach-link" data-panel="help-link">How layers work →</button></p>
+  <p class="panel-empty-text">Recording deleted. Start a new one whenever you like.<br><button type="button" class="coach-link" data-panel="help-link">How layers work →</button></p>
+  <button type="button" class="panel-button panel-rec-button" data-panel="rec"><span class="panel-rec-dot" aria-hidden="true"></span>Rec</button>
   <button type="button" class="panel-button icon-only save-button" data-panel="download" aria-label="Download as a WAV file" title="Download as a WAV file">
     ${ICONS.download}
   </button>

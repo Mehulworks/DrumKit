@@ -28,11 +28,10 @@ const chips = (group) => `<span class="panel-title">${EXTRA_TITLES[group]}</span
  */
 export function setupSticksSettings(container, sticks) {
   container.innerHTML = `
-    <label class="toggle-row">
-      <span class="setting-name">${ICONS.sticks}Show drumsticks</span>
-      <input type="checkbox" role="switch" id="show-sticks" />
-    </label>
-    <hr class="fade-divider" />
+    <div class="toggle-row is-switch-only sticks-switch">
+      <span class="setting-name" id="show-sticks-label">${ICONS.sticks}Show drumsticks</span>
+      <input type="checkbox" role="switch" id="show-sticks" aria-labelledby="show-sticks-label" />
+    </div>
     <span class="panel-title">Stick type</span>
     <div class="kit-cards stick-types"></div>
     <span class="panel-title">Colour<span class="stick-colour-choice"></span></span>
@@ -42,6 +41,10 @@ export function setupSticksSettings(container, sticks) {
     </div>
     ${Object.keys(EXTRAS).map(chips).join('')}`;
   const toggle = container.querySelector('#show-sticks');
+  // The switch lives at the top of the drawer, under the view switch, so it is in reach from every tab.
+  const row = container.querySelector('.sticks-switch');
+  container.closest('.drawer')?.querySelector('.kit-view-switch')?.after(row);
+  const tab = () => container.closest('.drawer')?.querySelector('[data-tab=sticks]');
   const look = settings.look;
   // Choices saved by an older version may no longer exist.
   Object.keys(EXTRAS).forEach((group) => {
@@ -68,6 +71,8 @@ export function setupSticksSettings(container, sticks) {
     settings.showSticks = on;
     saveSettings();
     sticks.setVisible(on);
+    container.classList.toggle('is-sticks-off', !on); // the options grey out while the sticks are hidden
+    tab()?.classList.toggle('is-muted', !on); // and so does the tab
   }
 
   container.addEventListener('click', (event) => {
@@ -89,6 +94,8 @@ export function setupSticksSettings(container, sticks) {
   toggle.addEventListener('change', () => setOn(toggle.checked));
 
   toggle.checked = settings.showSticks;
+  container.classList.toggle('is-sticks-off', !settings.showSticks);
+  tab()?.classList.toggle('is-muted', !settings.showSticks);
   sticks.setVisible(settings.showSticks);
   applyStickFinish(look.sticks);
   render();

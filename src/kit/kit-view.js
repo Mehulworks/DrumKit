@@ -25,7 +25,7 @@ const ART = {
  */
 export function renderKit(container, { label, view, pads, decor, grid }) {
   container.innerHTML = `
-  <svg class="kit-svg${grid ? ' is-grid' : ''}" viewBox="0 0 ${view.width} ${view.height}" role="group"
+  <svg class="kit-svg${grid ? ' is-grid' : ''}" data-unit="${pads[0]?.unit ?? 1}" viewBox="0 0 ${view.width} ${view.height}" role="group"
     aria-label="${label} ${grid ? 'drum pads' : 'drum kit seen from above'}">
     <defs>${defs()}${electronicDefs()}</defs>
     <g class="kit-art" aria-hidden="true">

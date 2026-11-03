@@ -1,6 +1,14 @@
 // Kit previews: a small drawing of any kit in any theme, for the cards in the Kit drawer. Simplified shapes in the
 // theme's real colours (hoops and LED glow included), on the page background, drawn at the kit's own positions.
 import { themeColors } from '../kit/art/themes.js';
+import { padLookPreview } from '../kit/art/pad-looks.js';
+
+/**
+ * A look in the Pad grid view: one sample pad in it, for the Look cards in that view.
+ * @param {import('../kit/kits/index.js').Kit} kit
+ * @param {typeof import('../kit/art/themes.js').THEMES[number]} theme
+ */
+export const gridPreview = (kit, theme) => padLookPreview(theme, kit);
 
 /**
  * @param {import('../kit/kits/index.js').Kit} kit

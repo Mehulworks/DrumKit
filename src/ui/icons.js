@@ -24,6 +24,7 @@ export const ICONS = {
   moon: svg(`<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>`),
   close: svg(`<path d="M6 6l12 12M18 6L6 18"/>`),
   record: svg(`<circle cx="12" cy="12" r="6" fill="currentColor" stroke="none"/>`),
+  replay: svg(`<path d="M3 12a9 9 0 1 0 3-6.7"/><polyline points="3 3 3 9 9 9"/>`),
   play: svg(`<path d="M8 5.5v13l10.5-6.5z" fill="currentColor" stroke="none"/>`),
   pause: svg(`<rect x="7" y="6" width="3.5" height="12" rx="1" fill="currentColor" stroke="none"/><rect x="13.5" y="6" width="3.5" height="12" rx="1" fill="currentColor" stroke="none"/>`),
   stop: svg(`<rect x="7" y="7" width="10" height="10" rx="1.5" fill="currentColor" stroke="none"/>`),

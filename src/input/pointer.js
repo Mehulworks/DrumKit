@@ -5,7 +5,8 @@ import { getMode } from './modes.js';
  * Starts listening for presses and, in Hover mode, movement over the hit areas.
  * @param {Element} layer element that holds the hit areas (each has a data-pad attribute); the kit area works too,
  *   and keeps working when the kit inside it is swapped
- * @param {(id: string, point: {x: number, y: number}) => void} onHit point is where on screen the pad was hit
+ * @param {(id: string, point: {x: number, y: number}, eventTime: number) => void} onHit point is where on screen the pad
+ *   was hit; eventTime is the event's timeStamp, for timing-sensitive uses (lessons)
  */
 export function listenToPointers(layer, onHit) {
   // The pad each pointer (mouse, or each finger) is currently over, so moving within a pad does not repeat it.
@@ -18,7 +19,7 @@ export function listenToPointers(layer, onHit) {
     if (!area) return;
     event.preventDefault();
     padUnder.set(event.pointerId, area.dataset.pad);
-    onHit(area.dataset.pad, { x: event.clientX, y: event.clientY });
+    onHit(area.dataset.pad, { x: event.clientX, y: event.clientY }, event.timeStamp);
   });
 
   // Hover mode: the mouse plays a pad when it moves onto it; a finger does the same while sliding.
@@ -27,7 +28,7 @@ export function listenToPointers(layer, onHit) {
     const id = padAt(event.clientX, event.clientY);
     if (id === (padUnder.get(event.pointerId) ?? null)) return;
     padUnder.set(event.pointerId, id);
-    if (id) onHit(id, { x: event.clientX, y: event.clientY });
+    if (id) onHit(id, { x: event.clientX, y: event.clientY }, event.timeStamp);
   });
 
   const forget = (event) => padUnder.delete(event.pointerId);

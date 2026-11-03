@@ -1,12 +1,14 @@
-/* During a lesson: drum labels on the kit, the goal bar in the scoreboard and the lesson tip caption. */
+/* During a lesson: drum labels on the kit, the goal bar in the scoreboard and the lesson tip caption (the result card is
+   in learn-result.css). */
 
-/* During a lesson: the drums it uses are labelled (name and key, saffron edge); the others are dimmed a little. */
+/* During a lesson: the drums it uses are labelled (name and key, saffron edge, on a solid badge so the key reads
+   clearly over any drum); the others are dimmed a little. */
 .lesson-labels {
   pointer-events: none;
 }
 
 .lesson-label rect {
-  fill: rgb(0 0 0 / 0.62);
+  fill: #121214;
   stroke: var(--color-accent);
   stroke-width: 2;
 }

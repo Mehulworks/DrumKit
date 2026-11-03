@@ -45,10 +45,10 @@
   transform: rotate(-90deg);
 }
 
-/* After Delete: a short note with a "How layers work →" link, and a close button. */
+/* After Delete: a short note with a "How layers work →" link, Rec (the main step) on the right, and a close button. */
 .recording-panel.is-empty {
-  grid-template-columns: 1fr auto;
-  grid-template-areas: "empty close";
+  grid-template-columns: 1fr auto auto;
+  grid-template-areas: "empty rec close";
 }
 
 .recording-panel.is-empty .panel-info,
@@ -66,7 +66,8 @@
   display: block;
 }
 
-.recording-panel.is-empty .panel-close {
+.recording-panel.is-empty .panel-close,
+.recording-panel.is-empty .panel-rec-button {
   display: inline-flex;
 }
 

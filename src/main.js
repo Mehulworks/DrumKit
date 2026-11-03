@@ -5,6 +5,7 @@ import './styles.js';
 import { getKit } from './kit/kits/index.js';
 import { gridKit } from './kit/grid-layout.js';
 import { getTheme, applyTheme } from './kit/art/themes.js';
+import { applyPadLook } from './kit/art/pad-looks.js';
 import { applyBackdrop, glowBackdropLights } from './kit/art/backdrops.js';
 import { canFlash } from './ui/flash-lights.js';
 import { createStage } from './kit/stage.js';
@@ -60,7 +61,7 @@ const areaShape = () => { const { width, height } = areaSize(); return height > 
 let gridShape = 0;
 let gridWidth = 0;
 function mountKit(id, changed = false) {
-  // The Pad grid is the same kit (pads, keys, sounds) drawn as tiles: no theme art, floor or sticks there.
+  // The Pad grid is the same kit (pads, keys, sounds) drawn as tiles, on the same floor, with the same sticks.
   const grid = settings.view === 'grid';
   gridShape = areaShape();
   gridWidth = areaSize().width;
@@ -68,13 +69,12 @@ function mountKit(id, changed = false) {
   const kit = grid ? gridKit(getKit(id), areaSize(), concert?.gridTop(), tabHidden) : getKit(id);
   useSounds(kit.sounds);
   const { svg, motion } = stage.mount(kit);
-  if (!grid) {
-    applyTheme(svg, getTheme(settings.kitTheme), kit);
-    applyBackdrop(svg, settings.background);
-  }
+  if (grid) applyPadLook(svg, getTheme(settings.kitTheme), getKit(id)); // the theme on the tiles
+  else applyTheme(svg, getTheme(settings.kitTheme), kit);
+  applyBackdrop(svg, settings.background); // the floor, in both views
   svg.classList.toggle('show-keys', settings.showKeys);
   svg.classList.toggle('hide-names', !settings.showNames);
-  sticks = grid ? null : createSticks(svg, kit.pads); // sticks
+  sticks = createSticks(svg, kit.pads, { ...kit.view, grid }); // sticks
   sticks?.setVisible(settings.showSticks); // sticks
   sticks?.setLook(settings.look.stickType, settings.look); // sticks
   concert?.attach();
@@ -111,20 +111,24 @@ const recorder = createRecorder((id, time) => bookHit(id, time, { playback: true
   transport.render(state);
   panel.render(state);
   byId('kit').classList.toggle('is-recording', state.mode === 'recording' || state.mode === 'overdubbing');
+  if (state.mode !== 'idle' && state.mode !== 'playing') learn?.recordingStarted(); // one mode at a time
 });
 
 let help = null;
 mountKit(settings.kit);
 // The Pad grid is redrawn when the kit area changes shape or size (the screen turns, a panel opens), but not while a
-// lesson bar is open, so a lesson is never interrupted; it catches up once the lesson closes.
+// lesson run is playing, so a run is never interrupted; it catches up once the run ends.
 let refit = 0;
-new ResizeObserver(() => {
+function refitGrid() {
   clearTimeout(refit);
   refit = setTimeout(() => {
     const changed = Math.abs(areaShape() - gridShape) / gridShape > 0.04 || Math.abs(areaSize().width - gridWidth) / gridWidth > 0.08;
-    if (settings.view === 'grid' && changed && byId('learn-panel').hidden) mountKit(settings.kit);
+    if (settings.view !== 'grid' || !changed) return;
+    if (learn.isRunning()) refitGrid(); // a run is playing: check again shortly
+    else mountKit(settings.kit);
   }, 150);
-}).observe(byId('kit'));
+}
+new ResizeObserver(refitGrid).observe(byId('kit'));
 // The Pad grid makes room for the crowd, and fills the space a lesson leaves (before it starts, so nothing is cut short).
 for (const name of ['concert-change', 'lesson-open']) document.addEventListener(name, () => { if (settings.view === 'grid') mountKit(settings.kit); });
 
@@ -172,7 +176,8 @@ learn = setupLearn({
   panel,
 });
 const kitDrawer = setupKitDrawer(byId('kit-button'), byId('kit-drawer'), {
-  onTheme: (id) => { if (!stage.current.kit.grid) applyTheme(stage.current.svg, getTheme(id), stage.current.kit); },
+  onTheme: (id) => (stage.current.kit.grid ? applyPadLook(stage.current.svg, getTheme(id), getKit(settings.kit))
+    : applyTheme(stage.current.svg, getTheme(id), stage.current.kit)),
   onKit: (id) => mountKit(id, true),
   onView: () => mountKit(settings.kit, true),
   onReset: (tab) => tabResets[tab]?.reset(),
@@ -180,7 +185,7 @@ const kitDrawer = setupKitDrawer(byId('kit-button'), byId('kit-drawer'), {
 const tabResets = {}; // the EQ, Background and Sticks tabs each know how to reset themselves
 tabResets.eq = setupEqPanel(kitDrawer.eq);
 byId('eq-button').addEventListener('click', () => kitDrawer.openTab('eq')); // a shortcut to Customize > EQ
-tabResets.backdrop = setupBackdropPicker(kitDrawer.backdrops, (id) => { if (!stage.current.kit.grid) applyBackdrop(stage.current.svg, id); });
+tabResets.backdrop = setupBackdropPicker(kitDrawer.backdrops, (id) => applyBackdrop(stage.current.svg, id));
 tabResets.sticks = setupSticksSettings(kitDrawer.sticks, { // sticks
   setVisible: (on) => sticks?.setVisible(on), // sticks
   setLook: (type, extras) => sticks?.setLook(type, extras), // sticks
@@ -192,8 +197,8 @@ setupResetAll(byId('reset-all'));
 // Every live hit (touch, mouse, Hover or keyboard) goes through here, so all of them can be recorded.
 // point is where on screen it was hit (keys have none, so their ripple starts in the middle).
 let hitsSoFar = 0;
-function hitPad(id, point) {
-  if (!learn.allows(id)) return; // a drum the running lesson does not use stays silent
+function hitPad(id, point, eventTime) {
+  if (!learn.allows(id)) return stage.refuse(id); // a drum the running lesson does not use: silent, with a grey ring
   // After a first visitor's first few hits, point out Learn and Concert once.
   if (++hitsSoFar === 6) {
     showTipOnce('discover', byId('learn-button'), 'New here? Try <strong>Learn</strong> to play real beats, or <strong>Concert</strong> to play to a crowd.');
@@ -201,5 +206,5 @@ function hitPad(id, point) {
   playDrum(id);
   showHit(id, { point });
   recorder.recordHit(id);
-  learn.hit(id);
+  learn.hit(id, eventTime);
 }

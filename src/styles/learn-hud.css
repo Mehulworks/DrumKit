@@ -63,8 +63,40 @@
 }
 
 
-/* On the kit: the soft saffron glow on the pad to hit. */
+/* On the kit: the soft glow on the pad to hit, in its drum family's colour (grid.css), like its dots in the beat grid. */
 .cue-glow {
-  fill: var(--color-accent);
+  fill: var(--role, var(--color-accent));
   pointer-events: none;
+}
+
+/* Upright phones: a compact scoreboard that fits the width (the goal shows as text only). */
+@media (max-width: 35em) {
+  .hud-board {
+    gap: 0.625rem;
+    max-width: calc(100vw - 1.5rem);
+    padding: 0.375rem 0.875rem;
+  }
+
+  .hud-word {
+    min-width: 3.5em;
+    font-size: 1rem;
+  }
+
+  .hud-stat b {
+    font-size: 1rem;
+  }
+
+  .hud-stat small {
+    font-size: 0.5625rem;
+  }
+
+  .hud-goal-bar {
+    display: none;
+  }
+
+  .hud-goal-text {
+    min-width: 0;
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
 }

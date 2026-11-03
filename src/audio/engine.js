@@ -33,6 +33,25 @@ export function getAudio() {
 }
 
 /**
+ * How long a sound booked now takes to reach the ear (speakers, Bluetooth). The beat line, the drum glow and the lesson
+ * judge all use this one figure, so what you see, hear and are scored on line up.
+ * @param {AudioContext} audio
+ */
+export const heardDelay = (audio) => audio.outputLatency || audio.baseLatency || 0;
+
+/**
+ * The audio-clock time at which an input event happened. The event is often handled a little after the tap (a busy
+ * frame), so its own timestamp is used rather than the moment the code runs; capped, in case the timestamp is odd.
+ * @param {AudioContext} audio
+ * @param {number} [eventTime] the event's timeStamp (performance.now() clock); now if missing
+ */
+export function eventAudioTime(audio, eventTime) {
+  if (eventTime === undefined) return audio.currentTime;
+  const age = Math.min(0.15, Math.max(0, (performance.now() - eventTime) / 1000));
+  return audio.currentTime - age;
+}
+
+/**
  * Sets one EQ band, now or (if audio has not started yet) as soon as it starts.
  * @param {string} id band id: 'bass', 'mid' or 'treble'
  * @param {number} db gain in dB

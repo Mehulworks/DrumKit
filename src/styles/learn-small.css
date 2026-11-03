@@ -29,8 +29,7 @@
     display: none;
   }
 
-  .grid-cell,
-  .grid-lead {
+  .grid-cell {
     height: 0.5625rem;
   }
 

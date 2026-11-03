@@ -1,0 +1,141 @@
+/* Touch screens: an invisible ring round each small control makes its tap area about 40px, the size fingers need,
+   without changing how anything looks. A ring only grows into free space: never past halfway to the next control, and
+   never sideways where controls sit side by side (the Tap / Drag halves, the toolbar's buttons, In time / Step by step).
+   The sizes come from measuring phones from 360 to 844px wide; a ring is measured from inside the border, so bordered
+   buttons get their border's width extra. */
+@media (pointer: coarse) {
+  .topbar .icon-button,
+  .metronome-button,
+  .record-button,
+  .panel-button,
+  .panel-fold,
+  #mode-switch button,
+  .learn-mode button,
+  .kit-tab,
+  .kit-reset,
+  .chip,
+  .try-button,
+  .learn-more-button,
+  #learn-panel [data-learn="start"],
+  .drawer [data-close] {
+    position: relative;
+  }
+
+  .topbar .icon-button::after,
+  .metronome-button::after,
+  .record-button::after,
+  .panel-button::after,
+  .panel-fold::after,
+  #mode-switch button::after,
+  .learn-mode button::after,
+  .kit-tab::after,
+  .kit-reset::after,
+  .chip::after,
+  .try-button::before,
+  .learn-more-button::after,
+  #learn-panel [data-learn="start"]::after,
+  .drawer [data-close]::after {
+    content: "";
+    position: absolute;
+    inset: -0.375rem;
+  }
+
+  .panel-fold::after {
+    inset: -0.4375rem;
+  }
+
+  /* The toolbar's 32px buttons sit only 6px apart: 4px above and below, none sideways. */
+  .topbar .icon-button::after {
+    inset: -0.3125rem 0;
+  }
+
+  .topbar .feature-concert::after {
+    inset: -0.375rem 0; /* its border is 2px */
+  }
+
+  /* The ⋮ menu's rows touch each other and span the menu's width: no ring (a ring would reach into the next row). */
+  .more-menu .icon-button::after {
+    inset: 0;
+  }
+
+  /* Rec sits in a pill that used to clip its ring; the ring now reaches out of it, above and below only. */
+  .recorder-group {
+    overflow: visible;
+  }
+
+  .record-button::after {
+    inset: -0.5rem 0;
+  }
+
+  /* Halves that touch side by side: 8px above and below only. */
+  #mode-switch button::after,
+  .learn-mode button::after {
+    inset: -0.5rem 0;
+  }
+
+  /* The Customize tab on the screen's left edge grows towards the kit. */
+  .kit-tab::after {
+    inset: -0.125rem -0.625rem -0.125rem 0;
+  }
+
+  /* Drawer headers: Reset and ✕ sit 6px apart, so 4px above and below only. */
+  .drawer [data-close]::after,
+  .kit-reset::after {
+    inset: -0.3125rem 0;
+  }
+
+  /* Chips (EQ presets, the guide's sections) wrap in rows 6 to 8px apart: at least 32px tall, 3px above and below. */
+  .chip {
+    min-height: 2rem;
+  }
+
+  .chip::after {
+    inset: -0.25rem 0;
+  }
+
+  /* Try it buttons have room all round. */
+  .try-button::before {
+    inset: -0.4375rem;
+  }
+
+  /* The lesson bar's end: Start, ⋮ and ✕ sit 4 to 16px apart, so each grows only into its own free space. */
+  #learn-panel [data-learn="start"]::after {
+    inset: -0.3125rem 0 -0.3125rem -0.25rem;
+  }
+
+  .learn-more-button::after {
+    inset: -0.3125rem -0.1875rem -0.3125rem -0.3125rem;
+  }
+
+  #learn-panel [data-learn="close"]::after {
+    inset: -0.4375rem -0.5rem -0.4375rem -0.125rem;
+  }
+
+  .learn-caption-close::after {
+    inset: -0.4375rem;
+  }
+
+  /* On / off switches are inputs, which cannot have a ring: a transparent border grows the tap area to 40px tall, and a
+     matching negative margin keeps them exactly where they were. The knob and track stay inside the border. */
+  .toggle-row input {
+    box-sizing: content-box;
+    margin: -0.5625rem;
+    border: 0.5625rem solid transparent;
+    background-clip: padding-box;
+  }
+
+  .toggle-row input:focus-visible {
+    outline-offset: -0.4375rem;
+  }
+
+  /* The credit and version links at the end of the ⋮ menu: text links with free space above and below. */
+  .menu-credit-line a {
+    position: relative;
+  }
+
+  .menu-credit-line a::after {
+    content: "";
+    position: absolute;
+    inset: -0.8125rem 0;
+  }
+}

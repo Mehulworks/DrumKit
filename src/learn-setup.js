@@ -1,6 +1,6 @@
 // Learn wiring: lessons and style beats are picked in the Learn drawer and practised in the lesson bar (beat grid, Demo,
 // Start, speed) with a scoreboard over the kit; the players book clicks and cues and judge your hits. Also the lesson lock
-// (only a running lesson's drums play) and, on phones, Learn and Concert taking turns.
+// (only a running lesson's drums play) and one mode at a time (Learn, Concert and Recording take turns).
 import { setupPhoneTurns } from './ui/phone-turns.js';
 import { createLessonLock } from './ui/lesson-lock.js';
 import { createLessonPlayer } from './learn/lesson-player.js';
@@ -9,18 +9,8 @@ import { notesFor } from './learn/pattern.js';
 import { setupLearnPanel } from './ui/learn-panel.js';
 import { setupLearnDrawer } from './ui/learn-drawer.js';
 import { setupLearnHud } from './ui/learn-hud.js';
+import { startTourOnce } from './ui/tour.js';
 import { settings } from './ui/storage.js';
-import { showNoticeOnce } from './ui/toast.js';
-
-// Upright phones: the first lesson opened suggests turning sideways for a bigger beat grid (once, closable). If another
-// message is showing (such as Concert pausing), the tip waits until it has gone.
-const UPRIGHT_PHONE = matchMedia('(orientation: portrait) and (max-width: 35em)');
-function learnRotateTip() {
-  if (!UPRIGHT_PHONE.matches) return;
-  const show = () => showNoticeOnce('learn-rotate', 'Tip: turn your phone sideways for a bigger beat grid.');
-  if (document.querySelector('.toast')) setTimeout(show, 3600);
-  else show();
-}
 
 const byId = (id) => document.getElementById(id);
 
@@ -28,7 +18,8 @@ const byId = (id) => document.getElementById(id);
  * @param {{stage: object, bookHit: (id: string, time: number, options?: object) => void, cues: () => object,
  *   lessonFocus: () => object, sticks: () => object, concert: object, panel: object}} parts cues, lessonFocus and sticks
  *   are getters: they belong to the kit on stage and change when a kit is mounted
- * @returns {{hit: (id: string) => void, allows: (id: string) => boolean, stop: () => void, refresh: () => void}}
+ * @returns {{hit: (id: string) => void, allows: (id: string) => boolean, recordingStarted: () => void, stop: () => void,
+ *   refresh: () => void}}
  */
 export function setupLearn({ stage, bookHit, cues, lessonFocus, sticks, concert, panel }) {
   const padsOnStage = () => new Set(stage.current.kit.pads.map((pad) => pad.id));
@@ -108,7 +99,7 @@ export function setupLearn({ stage, bookHit, cues, lessonFocus, sticks, concert,
     lessonLock.clear();
     turns.lessonClosed();
   });
-  // Learn and Concert take turns; on phones the recording panel also folds during a lesson, so the kit stays big.
+  // One mode at a time: Learn takes turns with Concert and with Recording (phone-turns.js).
   const turns = setupPhoneTurns({
     concert,
     panel,
@@ -119,15 +110,42 @@ export function setupLearn({ stage, bookHit, cues, lessonFocus, sticks, concert,
     learnPanel.open(item, list, label);
     turns.lessonOpened();
     document.dispatchEvent(new CustomEvent('lesson-open')); // main.js refits the Pad grid
-    learnRotateTip();
+    introduceLessonBar();
   });
+  // The tour step about speed and the metronome click: on phones they sit in the bar's ⋮ menu.
+  function speedStep(bar) {
+    const more = bar.querySelector('.learn-more-button');
+    if (more.offsetParent) return { target: () => more, text: 'Too fast? The <strong>speed</strong> and the metronome <strong>click</strong> are in ⋮.' };
+    const controls = bar.querySelector('.learn-tertiary');
+    return { target: () => (controls.offsetParent ? controls : bar.querySelector('.learn-extras')),
+      text: 'Too fast? Slow it down with <strong>−</strong> and <strong>+</strong>. The metronome button turns the click on or off.' };
+  }
+
+  // The first lesson opened after a page load: the bar pulses saffron twice (people missed it), then a short tour.
+  let introduced = false;
+  function introduceLessonBar() {
+    if (introduced || settings.tipsSeen.includes('tour-learn')) return; // once per page load, unless the tour is turned off
+    introduced = true;
+    const bar = byId('learn-panel');
+    bar.classList.add('is-intro');
+    setTimeout(() => bar.classList.remove('is-intro'), 2600);
+    setTimeout(() => startTourOnce('tour-learn', [
+      { target: () => bar.querySelector('.beat-grid'), text: 'This is the beat. Each row is a drum: hit it when the line reaches its dot.' },
+      { target: () => bar.querySelector('.learn-mode'), text: '<strong>In time</strong> keeps the beat going. <strong>Step by step</strong> waits for each hit, to learn the pattern first.' },
+      speedStep(bar),
+      { target: () => bar.querySelector('[data-learn=start]'), text: 'Ready? <strong>Start</strong> gives a 4, 3, 2, 1 count-in, then play along. 80% on time passes.',
+        action: { label: 'Start', run: () => bar.querySelector('[data-learn=start]').click() } },
+    ]), 900);
+  }
 
   return {
-    /** A live hit, for the lesson or step player that is running. @param {string} id */
-    hit(id) {
-      lessons.hit(id);
+    /** A live hit, for the lesson or step player that is running. @param {string} id @param {number} [eventTime] */
+    hit(id, eventTime) {
+      lessons.hit(id, eventTime);
       steps.hit(id);
     },
+    /** Rec was pressed: an open lesson closes, so only one mode runs. */
+    recordingStarted: () => turns.recordingStarted(),
     /** False for a drum the running lesson does not use (it stays silent). @param {string} id */
     allows: (id) => lessonLock.allows(id),
     /** Stops any run (when the kit changes). */
@@ -135,6 +153,8 @@ export function setupLearn({ stage, bookHit, cues, lessonFocus, sticks, concert,
       lessons.stop();
       steps.stop();
     },
+    /** True while a lesson or step run is playing (not a Demo). */
+    isRunning: () => (lessons.isRunning() && !learnPanel.isDemo()) || steps.isRunning(),
     /** Redraws the lesson bar for the kit on stage. */
     refresh: () => learnPanel.refresh(),
   };

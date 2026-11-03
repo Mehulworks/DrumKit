@@ -34,6 +34,10 @@ export function createStage(container) {
       current.motion.hit(id);
       current.effects.hit(id, options);
     },
+    /** A tap on a drum the running lesson does not use: a grey ring, so the tap still feels heard. @param {string} id */
+    refuse(id) {
+      current?.effects.refuse(id);
+    },
     /** A tap on the floor between drums. @param {{x: number, y: number}} point screen point */
     floorTap(point) {
       current?.effects.floorTap(point);

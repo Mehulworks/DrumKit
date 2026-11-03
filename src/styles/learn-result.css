@@ -1,0 +1,157 @@
+/* After a lesson run: the result card with its next steps, the dim layer behind it, confetti after a pass, the ripple
+   on Start until the first run, and the outlined Replay after a pass. */
+/* The result card after a run: in the middle of the kit, with the next steps; the main one on the right. */
+.learn-result {
+  position: fixed;
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: min(30rem, calc(100vw - 2rem));
+  padding: 2rem 1.75rem 1.75rem;
+  border: 1px solid var(--color-accent);
+  border-radius: 1rem;
+  background: radial-gradient(90% 70% at 50% 0%, color-mix(in srgb, var(--color-accent) 14%, transparent), transparent 70%), var(--color-surface);
+  box-shadow: 0 24px 60px rgb(0 0 0 / 0.45);
+  text-align: center;
+  translate: -50% -50%;
+  animation: result-in 0.3s ease-out;
+}
+
+.learn-result[hidden] {
+  display: none;
+}
+
+@keyframes result-in {
+  from { opacity: 0; scale: 0.94; }
+}
+
+.learn-result-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 2.25rem;
+  line-height: 1.1;
+}
+
+.learn-result.is-pass .learn-result-title {
+  color: var(--color-accent);
+}
+
+.learn-result-line {
+  margin: 0 0 1rem;
+  color: var(--color-text-muted);
+  font-size: 1rem;
+}
+
+.learn-result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.625rem;
+}
+
+.learn-result-actions button {
+  min-height: 2.75rem;
+  padding: 0 1.25rem;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.learn-result-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: inline-flex;
+  padding: 0.5rem;
+  border: 0;
+  background: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+/* The dim layer behind the result card: it takes every click, so nothing behind can be pressed. */
+.learn-result-backdrop {
+  position: fixed;
+  z-index: 24;
+  inset: 0;
+  background: rgb(0 0 0 / 0.55);
+  animation: backdrop-in 0.25s ease-out;
+}
+
+.learn-result-backdrop[hidden] {
+  display: none;
+}
+
+@keyframes backdrop-in {
+  from { opacity: 0; }
+}
+
+/* Confetti from the top of the card after a pass. */
+.confetti {
+  position: fixed;
+  z-index: 26;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.confetti i {
+  position: absolute;
+  width: 0.5rem;
+  height: 0.75rem;
+  border-radius: 2px;
+  animation: confetti 1.2s cubic-bezier(0.2, 0.7, 0.4, 1) both;
+}
+
+@keyframes confetti {
+  0% { transform: translate(0, 0) rotate(0); opacity: 1; }
+  70% { opacity: 1; }
+  45% { transform: translate(var(--x), var(--y)) rotate(calc(var(--r) / 2)); }
+  100% { transform: translate(calc(var(--x) * 1.15), calc(var(--y) + 260px)) rotate(var(--r)); opacity: 0; }
+}
+
+@media (max-width: 35em) {
+  .learn-result {
+    padding: 1.5rem 1.25rem 1.25rem;
+  }
+
+  .learn-result-title {
+    font-size: 1.75rem;
+  }
+
+  .learn-result-actions button {
+    flex: 1 1 auto;
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+/* Start, until the first run: a gentle saffron ring, so it is clear the lesson starts there. */
+#learn-panel [data-learn="start"].is-cue {
+  animation: start-cue 1.8s ease-out infinite;
+}
+
+/* Two rings that spread out from the button, one after the other, like a ripple. */
+@keyframes start-cue {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-accent) 70%, transparent), 0 0 0 0 color-mix(in srgb, var(--color-accent) 45%, transparent); }
+  45% { box-shadow: 0 0 0 10px color-mix(in srgb, var(--color-accent) 0%, transparent), 0 0 0 4px color-mix(in srgb, var(--color-accent) 35%, transparent); }
+  100% { box-shadow: 0 0 0 10px transparent, 0 0 0 16px color-mix(in srgb, var(--color-accent) 0%, transparent); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .learn-result,
+  #learn-panel [data-learn="start"].is-cue {
+    animation: none;
+  }
+}
+
+/* After a pass the bar's Replay is outlined: the result card's Next lesson is the main action. */
+#learn-panel [data-learn="start"].is-replay {
+  border-color: var(--color-accent);
+  background: transparent;
+  color: var(--color-accent);
+}
