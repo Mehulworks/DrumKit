@@ -2,7 +2,6 @@
    corner (clear of the drums) leaves it. */
 body.is-focus .topbar,
 body.is-focus .kit-tab,
-body.is-focus .credits,
 body.is-focus .recording-panel {
   display: none !important;
 }

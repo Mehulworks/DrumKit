@@ -113,6 +113,7 @@ export function setupLearnPanel(panel, player) {
     }
     const action = event.target.closest('[data-learn]')?.dataset.learn;
     if (!action) return;
+    if (action === 'start' || action === 'demo') caption.dock(); // the tip moves out of the way of the run
     if (action === 'close') {
       stopAll();
       panel.hidden = true;
@@ -181,7 +182,11 @@ export function setupLearnPanel(panel, player) {
       setPlaying(false);
       part('[data-learn=start]').classList.add('is-cue'); // a gentle ring until the first Start or Demo
       panel.hidden = false;
-      caption.show();
+      caption.hide(); // learn-setup.js introduces it once the tour (if any) is done
+    },
+    /** Shows the lesson tip in the middle of the drums, then docks it at the bottom (only while the bar is open). */
+    introduceTip() {
+      if (!panel.hidden) caption.introduce();
     },
     /** Redraws the grid for the kit on stage (after a kit change). */
     refresh() {

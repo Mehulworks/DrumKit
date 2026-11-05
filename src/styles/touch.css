@@ -11,14 +11,13 @@
   .panel-fold,
   #mode-switch button,
   .learn-mode button,
-  .kit-tab,
   .kit-reset,
   .chip,
   .try-button,
   .learn-more-button,
   #learn-panel [data-learn="start"],
   .drawer [data-close] {
-    position: relative;
+    position: relative; /* not the Customize tab: it is fixed to the screen edge, which already anchors its ring */
   }
 
   .topbar .icon-button::after,
@@ -137,5 +136,14 @@
     content: "";
     position: absolute;
     inset: -0.8125rem 0;
+  }
+
+  /* The two lines sit close: each line's tap area grows away from the other, so they never overlap. */
+  .menu-credit-by a::after {
+    bottom: -0.25rem;
+  }
+
+  .menu-credit-links a::after {
+    top: -0.25rem;
   }
 }

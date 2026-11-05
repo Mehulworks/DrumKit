@@ -12,6 +12,7 @@ export const DEFAULTS = {
   tempo: 100,
   showKeys: hasKeyboard,
   showNames: true, // instrument names on the Pad grid tiles
+  showKitNames: false, // instrument names on the drawn drums
   showSticks: true,
   flashLights: true,
   kit: 'acoustic',

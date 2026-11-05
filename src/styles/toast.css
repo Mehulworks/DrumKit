@@ -127,7 +127,8 @@
 
 /* Upright phones: notices sit at the top, under the toolbar, so they never cover the drums at the bottom. */
 @media (orientation: portrait) and (max-width: 35em) {
-  .toast.has-close {
+  .toast.has-close,
+  body:has(#learn-panel:not([hidden])) .toast.has-close { /* also with a lesson open, or it stretches top to bottom */
     top: calc(var(--topbar-bottom, 3.5rem) + var(--space-sm));
     bottom: auto;
   }

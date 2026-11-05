@@ -1,6 +1,6 @@
 // Rotate notice: on an upright phone, a one-time toast suggests turning it sideways for a bigger kit (it can be closed).
-// Once the phone is turned, it closes by itself, so it never sits over the drums. Not shown in the Pad grid, which
-// already fills an upright screen.
+// Once the phone is turned, or a lesson opens, it closes by itself, so it never sits over the drums or the lesson bar.
+// Not shown in the Pad grid, which already fills an upright screen.
 import { showNoticeOnce } from './toast.js';
 import { settings } from './storage.js';
 
@@ -15,4 +15,5 @@ export function setupRotateNotice() {
   };
   notice();
   upright.addEventListener('change', notice);
+  document.addEventListener('lesson-open', () => shown?.leave()); // it would cover the lesson bar's title and ✕
 }

@@ -173,7 +173,7 @@ export function setupRecordingPanel(panel, recorder, maxLayers, showLayerHelp) {
         { target: () => part('[data-panel=play]'), text: 'Your take is saved. Press <strong>Play</strong> to hear it back; <strong>Pause</strong> keeps your place.' },
         { target: () => layer, text: '<strong>Add layer</strong> plays your take and records what you play on top, like a second drummer. Up to 3 layers.' },
         { target: () => save, text: `${ICONS.download} saves the whole recording as a sound file. Nothing is uploaded.` },
-      ]);
+      ], { container: panel }); // closing the panel ends the tour
     }
   }
 

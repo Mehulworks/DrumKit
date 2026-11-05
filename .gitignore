@@ -3,3 +3,5 @@ node_modules/
 dist/
 .env
 .env.*
+# Private working files (notes, case study material); never uploaded.
+Private_DontUpload/

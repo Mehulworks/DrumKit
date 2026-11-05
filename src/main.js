@@ -25,7 +25,7 @@ import { setupHelpDrawer } from './ui/help-drawer.js';
 import { setupKitDrawer } from './ui/kit-drawer.js';
 import { setupSticksSettings } from './ui/sticks-settings.js'; // sticks
 import { setupBackdropPicker } from './ui/backdrop-picker.js';
-import { setupCredits, setupMenuCredit } from './ui/credits.js';
+import { setupMenuCredit } from './ui/credits.js';
 import { setupRotateNotice } from './ui/rotate-notice.js';
 import { setupFocusMode } from './ui/focus-mode.js';
 import { setupMoreMenu } from './ui/more-menu.js';
@@ -72,8 +72,7 @@ function mountKit(id, changed = false) {
   if (grid) applyPadLook(svg, getTheme(settings.kitTheme), getKit(id)); // the theme on the tiles
   else applyTheme(svg, getTheme(settings.kitTheme), kit);
   applyBackdrop(svg, settings.background); // the floor, in both views
-  svg.classList.toggle('show-keys', settings.showKeys);
-  svg.classList.toggle('hide-names', !settings.showNames);
+  showLabels(svg);
   sticks = createSticks(svg, kit.pads, { ...kit.view, grid }); // sticks
   sticks?.setVisible(settings.showSticks); // sticks
   sticks?.setLook(settings.look.stickType, settings.look); // sticks
@@ -84,6 +83,13 @@ function mountKit(id, changed = false) {
   learn?.refresh(); // the grid and labels follow the kit's drums
   motion.entrance(changed);
   help?.setPads(kit.pads);
+}
+
+/** Key and instrument names on the pads: names are remembered per view (the Pad grid's tiles carry their own). */
+function showLabels(svg) {
+  svg.classList.toggle('show-keys', settings.showKeys);
+  svg.classList.toggle('hide-names', !settings.showNames);
+  svg.classList.toggle('show-names', settings.view !== 'grid' && settings.showKitNames);
 }
 
 /**
@@ -143,7 +149,6 @@ listenToKeys(() => stage.current.kit.pads, hitPad);
 
 setupToolbar();
 setupMoreMenu(byId('more-button'), byId('more-menu'));
-setupCredits(byId('credits'));
 setupMenuCredit(byId('menu-credit'));
 setupRotateNotice();
 // Focus mode closes any open drawer before the toolbar hides.
@@ -190,8 +195,7 @@ tabResets.sticks = setupSticksSettings(kitDrawer.sticks, { // sticks
   setVisible: (on) => sticks?.setVisible(on), // sticks
   setLook: (type, extras) => sticks?.setLook(type, extras), // sticks
 }); // sticks
-setupMenuSettings(byId('menu-settings'), (show) => stage.current.svg.classList.toggle('show-keys', show),
-  (show) => stage.current.svg.classList.toggle('hide-names', !show));
+setupMenuSettings(byId('menu-settings'), () => showLabels(stage.current.svg));
 setupResetAll(byId('reset-all'));
 
 // Every live hit (touch, mouse, Hover or keyboard) goes through here, so all of them can be recorded.

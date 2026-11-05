@@ -83,13 +83,19 @@
   }
 }
 
-/* Key names on the pads: hidden unless "Show keys" is on; never block a hit. */
+/* Labels on the pads: the key ("Show keys"), the name ("Show names", drawn drums only), or both on one badge; none
+   unless a switch is on. They never block a hit. */
 .kit-labels {
-  display: none;
   pointer-events: none;
 }
 
-.kit-svg.show-keys .kit-labels {
+.kit-labels > .key-label {
+  display: none;
+}
+
+.kit-svg.show-keys:not(.show-names) .kit-labels > .is-key,
+.kit-svg.show-names:not(.show-keys) .kit-labels > .is-name,
+.kit-svg.show-keys.show-names .kit-labels > .is-both {
   display: inline;
 }
 

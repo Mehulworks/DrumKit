@@ -39,7 +39,7 @@
   align-items: center;
   gap: 0.375rem;
   min-height: 2.5rem;
-  padding: 0 0.25rem 0 0.625rem;
+  padding: 0 0.6875rem 0 0.625rem; /* the + ends in line with the switches above */
   font-size: 0.875rem;
 }
 
@@ -72,6 +72,26 @@
 /* The tempo row sits under the Metronome switch, indented like its label; greyed out while the metronome is off. */
 .menu-tempo-gap {
   width: 1.125rem;
+}
+
+/* With a mouse: tucked up under the Metronome switch it belongs to, rather than a full row below it. */
+.more-menu .menu-tempo {
+  min-height: 2rem;
+  margin-top: -0.375rem;
+}
+
+/* Touch screens: a full row of its own and bigger − and + (40 px), so a finger never lands on the Metronome switch. */
+@media (pointer: coarse) {
+  .more-menu .menu-tempo {
+    min-height: 2.5rem;
+    margin-top: 0;
+  }
+
+  .more-menu .menu-step {
+    width: 2.5rem;
+    min-width: 2.5rem;
+    min-height: 2.5rem;
+  }
 }
 
 .menu-tempo.is-off {

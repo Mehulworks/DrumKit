@@ -17,10 +17,15 @@
   font: 600 20px var(--font-body);
 }
 
-/* Darkened rather than faded, so drums that overlap (toms over the kick) stay solid. */
+/* Darkened rather than faded, so drums that overlap (toms over the kick) stay solid. They are silent while the
+   lesson is open, so they read as clearly off. */
 .pad-art.is-dimmed {
-  filter: brightness(0.45) saturate(0.6);
+  filter: brightness(0.3) saturate(0.4);
   transition: filter 0.2s ease;
+}
+
+.hit-area.is-unused {
+  cursor: not-allowed;
 }
 
 /* With a lesson's own labels showing, the plain key labels step aside. */
@@ -43,8 +48,16 @@
 
 .hud-goal-text {
   min-width: 8.5em;
-  font-size: 0.9375rem;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  white-space: pre; /* keeps the space between the number and its words */
+}
+
+.hud-goal-text .goal-num {
+  color: var(--color-text);
+  font-size: 1.125rem;
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
 .hud-goal-bar::before,
@@ -97,7 +110,7 @@
   gap: 0.5rem;
   max-width: min(40rem, calc(100vw - 2rem));
   margin: 0;
-  padding: 0.375rem 0.375rem 0.375rem 1rem;
+  padding: 0.375rem 0.75rem 0.375rem 1rem; /* the ✕ button's own 0.25rem makes the right edge match the left */
   border: 1px solid var(--color-border);
   border-radius: 999px;
   background: color-mix(in srgb, var(--color-surface) 90%, transparent);
@@ -112,7 +125,28 @@
   display: none;
 }
 
+/* When a lesson opens: the tip first shows larger in the middle of the drums, then glides down to the bottom. */
+.learn-caption {
+  transition: bottom 0.5s ease, translate 0.5s ease, font-size 0.3s ease, padding 0.3s ease, border-color 0.3s ease;
+}
+
+.learn-caption.is-intro {
+  bottom: 50%;
+  padding: 0.625rem 1rem 0.625rem 1.25rem;
+  border-color: var(--color-accent);
+  font-size: 1.0625rem;
+  box-shadow: 0 10px 32px rgb(0 0 0 / 0.4);
+  translate: -50% 50%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .learn-caption {
+    transition: none;
+  }
+}
+
 .learn-caption p {
+  flex: 1; /* pushes the ✕ to the right edge */
   margin: 0;
 }
 

@@ -1,25 +1,30 @@
-// Tour: a short, one-time walk through a few real controls (Learn, recording). Each step points at its control with a
-// saffron ring; Next moves on, Skip ends it. Shown once per page load, until "Don't show again" is ticked (remembered in
-// this browser; Reset all brings it back).
+// Tour: a short walk through a few real controls (Learn, recording). Each step points at its control with a saffron
+// ring; Next moves on, Skip ends it. Shown once per page load (or every time, if asked), until "Don't show again" is
+// ticked (remembered in this browser; Reset all or clearing browsing data brings it back). It ends with its panel.
 import { ICONS } from './icons.js';
 import { settings, saveSettings } from './storage.js';
 
 const shownThisLoad = new Set();
+const running = new Set();
 
 /**
- * Starts the tour, once per page load, unless it was turned off.
+ * Starts the tour unless it was turned off, or is already showing.
  * @param {string} id a name for this tour
  * @param {Array<{target: () => (HTMLElement | null), text: string, action?: {label: string, run: () => void}}>} steps steps
  *   whose control is missing or hidden are skipped; the last step's action (such as Start) replaces Got it
+ * @param {{everyTime?: boolean, container?: HTMLElement, onEnd?: () => void}} [options] everyTime: not just once per page
+ *   load; container: the panel the tour is about (the tour ends when it is hidden); onEnd: runs when the tour ends
+ * @returns {boolean} whether the tour started
  */
-export function startTourOnce(id, steps) {
-  if (settings.tipsSeen.includes(id) || shownThisLoad.has(id)) return;
+export function startTourOnce(id, steps, { everyTime = false, container = null, onEnd = null } = {}) {
+  if (settings.tipsSeen.includes(id) || running.has(id) || (!everyTime && shownThisLoad.has(id))) return false;
   const shown = steps.filter((step) => {
     const el = step.target();
     return el && el.getBoundingClientRect().width > 0;
   });
-  if (!shown.length) return;
+  if (!shown.length) return false;
   shownThisLoad.add(id);
+  running.add(id);
   // "Don't show again": the tour stays off in this browser.
   const never = (off) => {
     settings.tipsSeen = settings.tipsSeen.filter((seen) => seen !== id).concat(off ? [id] : []);
@@ -35,11 +40,18 @@ export function startTourOnce(id, steps) {
   let index = 0;
   let target = null;
 
+  // Closing the panel the tour is about (such as the lesson bar) ends the tour too.
+  const watch = container && new MutationObserver(() => { if (container.hidden) end(); });
+  watch?.observe(container, { attributes: true, attributeFilter: ['hidden'] });
   function end() {
+    if (!running.has(id)) return;
+    running.delete(id);
+    watch?.disconnect();
     target?.classList.remove('tour-target');
     box.remove();
     removeEventListener('resize', place);
     removeEventListener('keydown', onKey);
+    onEnd?.();
   }
   // Below the control, or above it when there is no room below; the arrow points at its middle.
   function place() {
@@ -93,4 +105,5 @@ export function startTourOnce(id, steps) {
   addEventListener('resize', place);
   addEventListener('keydown', onKey);
   show();
+  return true;
 }

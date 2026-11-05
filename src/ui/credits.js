@@ -1,13 +1,15 @@
-// Credits: "Made by Mehul with Claude." (the name links to the portfolio), shown small in the bottom-right
-// corner of the kit area, at the end of the ⋮ menu and in the guide's About section, with a "Code" link to the repository.
+// Credits: "Made by Mehul with Claude." (the name links to the portfolio), at the end of the ⋮ menu (with the case study
+// and the version) and in the guide's About section (with the case study and the code). Nothing over the drums.
 import { ICONS } from './icons.js';
 import { version } from '../../package.json';
 
 const PORTFOLIO_URL = 'https://www.mehulvarshney.com/';
+const CASE_STUDY_URL = 'https://www.mehulvarshney.com/aibuilds/drum-kit'; // how it was designed and built
 const RELEASES_URL = 'https://github.com/Mehulworks/DrumKit/releases';
 const SHORT_VERSION = version.replace(/\.0$/, ''); // "2.2.0" shows as "v2.2", like the release tags
-const REPO_URL = 'https://github.com/Mehulworks/DrumKit'; // the public repository (empty hides the link)
-const REPO_LABEL = 'Code';
+const REPO_URL = 'https://github.com/Mehulworks/DrumKit'; // the public repository
+const ARROW = ' <span aria-hidden="true">↗</span>';
+const DOT = '<span aria-hidden="true"> · </span>';
 
 const external = (href, className, text) =>
   `<a class="${className}" href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`;
@@ -15,29 +17,23 @@ const external = (href, className, text) =>
 /** The credit line, with the name linking to the portfolio (opens in a new tab). */
 export const creditLine = (className) => `Made by ${external(PORTFOLIO_URL, className, 'Mehul')} with Claude.`;
 
-/** The link to the code and prompts, or nothing until the repository exists. */
-export const repoLink = (className = '') =>
-  (REPO_URL ? external(REPO_URL, className, `${REPO_LABEL} <span aria-hidden="true">↗</span>`) : '');
-
-/**
- * Fills the corner credit. The whole line takes clicks, so its text can be selected and copied without playing a drum.
- * @param {HTMLElement} container
- */
-export function setupCredits(container) {
-  const repo = repoLink('credits-link');
-  container.innerHTML = `<span>${creditLine('credits-link')}</span>${repo ? `<span class="credits-dot" aria-hidden="true">·</span>${repo}` : ''}`;
-}
+/** The links to the case study and the code, for the guide's About section. */
+export const aboutLinks = (className) =>
+  `${external(CASE_STUDY_URL, className, `Case study${ARROW}`)}${DOT}${external(REPO_URL, className, `Code${ARROW}`)}`;
 
 /**
  * Fills the credit at the end of the ⋮ menu: a divider with a music note in the middle, then the line in light text,
- * ending with the version, which links to the release notes. Both links are menu items, so the arrow keys reach them.
+ * and below it the case study and the version (which links to the release notes). The links are menu items, so the
+ * arrow keys reach them.
  * @param {HTMLElement} container
  */
 export function setupMenuCredit(container) {
   container.innerHTML = `<div class="menu-note-divider" role="separator">${ICONS.note}</div>
-    <p class="menu-credit-line">${creditLine('menu-credit-link')}<span aria-hidden="true"> · </span>${external(RELEASES_URL, 'menu-version-link', `v${SHORT_VERSION}`)}</p>`;
-  const [name, release] = container.querySelectorAll('a');
+    <p class="menu-credit-line menu-credit-by">${creditLine('menu-credit-link')}</p>
+    <p class="menu-credit-line menu-credit-links">${external(CASE_STUDY_URL, 'menu-credit-link', `Case study${ARROW}`)}${DOT}${external(RELEASES_URL, 'menu-version-link', `v${SHORT_VERSION}`)}</p>`;
+  const [name, study, release] = container.querySelectorAll('a');
   name.setAttribute('aria-label', "Made by Mehul with Claude. Opens Mehul's portfolio in a new tab");
+  study.setAttribute('aria-label', 'Case study: how Drum Kit was designed and built. Opens in a new tab');
   release.setAttribute('aria-label', `Version ${SHORT_VERSION}. Opens the release notes in a new tab`);
-  for (const link of [name, release]) link.setAttribute('role', 'menuitem');
+  for (const link of [name, study, release]) link.setAttribute('role', 'menuitem');
 }

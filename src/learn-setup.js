@@ -24,8 +24,8 @@ const byId = (id) => document.getElementById(id);
 export function setupLearn({ stage, bookHit, cues, lessonFocus, sticks, concert, panel }) {
   const padsOnStage = () => new Set(stage.current.kit.pads.map((pad) => pad.id));
   const hud = setupLearnHud(byId('learn-hud'), byId('kit'));
-  // While a lesson runs (not its Demo), only its drums play.
-  const lessonLock = createLessonLock(() => (lessons.isRunning() && !learnPanel.isDemo()) || steps.isRunning());
+  // While a lesson is open, only its drums play (lesson-lock.js).
+  const lessonLock = createLessonLock();
   const lessons = createLessonPlayer({
     play: (id, time) => bookHit(id, time, { playback: true }),
     cue: (id, time) => cues()?.cue(id, time),
@@ -121,22 +121,28 @@ export function setupLearn({ stage, bookHit, cues, lessonFocus, sticks, concert,
       text: 'Too fast? Slow it down with <strong>−</strong> and <strong>+</strong>. The metronome button turns the click on or off.' };
   }
 
-  // The first lesson opened after a page load: the bar pulses saffron twice (people missed it), then a short tour.
-  let introduced = false;
+  // Every lesson opened from Learn: a short tour (until "Don't show again" is ticked), then the lesson's tip shows in the
+  // middle of the drums before docking at the bottom. The first time after a page load the bar also pulses saffron
+  // twice (people missed it).
+  let pulsed = false;
   function introduceLessonBar() {
-    if (introduced || settings.tipsSeen.includes('tour-learn')) return; // once per page load, unless the tour is turned off
-    introduced = true;
     const bar = byId('learn-panel');
-    bar.classList.add('is-intro');
-    setTimeout(() => bar.classList.remove('is-intro'), 2600);
-    setTimeout(() => startTourOnce('tour-learn', [
-      { target: () => bar.querySelector('.beat-grid'), text: 'This is the beat. Each row is a drum: hit it when the line reaches its dot.' },
-      { target: () => bar.querySelector('.learn-mode'), text: '<strong>In time</strong> keeps the beat going. <strong>Step by step</strong> waits for each hit, to learn the pattern first.' },
-      speedStep(bar),
-      { target: () => bar.querySelector('[data-learn=start]'), text: 'Ready? <strong>Start</strong> gives a 4, 3, 2, 1 count-in, then play along. 80% on time passes.',
-        action: { label: 'Start', run: () => bar.querySelector('[data-learn=start]').click() } },
-    ]), 900);
+    if (!pulsed) {
+      pulsed = true;
+      bar.classList.add('is-intro');
+      setTimeout(() => bar.classList.remove('is-intro'), 2600);
+    }
+    setTimeout(() => {
+      if (!startLessonTour(bar)) learnPanel.introduceTip(); // no tour (turned off): the tip comes straight in
+    }, 900);
   }
+  const startLessonTour = (bar) => startTourOnce('tour-learn', [
+    { target: () => bar.querySelector('.beat-grid'), text: 'This is the beat. Each row is a drum: hit it when the line reaches its dot.' },
+    { target: () => bar.querySelector('.learn-mode'), text: '<strong>In time</strong> keeps the beat going. <strong>Step by step</strong> waits for each hit, to learn the pattern first.' },
+    speedStep(bar),
+    { target: () => bar.querySelector('[data-learn=start]'), text: 'Ready? <strong>Start</strong> gives a 4, 3, 2, 1 count-in, then play along. 80% on time passes.',
+      action: { label: 'Start', run: () => bar.querySelector('[data-learn=start]').click() } },
+  ], { everyTime: true, container: bar, onEnd: () => learnPanel.introduceTip() }); // ends if the bar is closed
 
   return {
     /** A live hit, for the lesson or step player that is running. @param {string} id @param {number} [eventTime] */

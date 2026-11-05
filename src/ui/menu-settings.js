@@ -15,13 +15,12 @@ const toggle = (id, icon, label) => `<button type="button" class="icon-button me
 
 /**
  * @param {HTMLElement} container the settings area in the More menu
- * @param {(show: boolean) => void} showKeys shows or hides the key names on the pads
- * @param {(show: boolean) => void} showNames shows or hides the instrument names on the Pad grid tiles
+ * @param {() => void} showLabels shows the key and instrument names on the pads as the settings say
  */
-export function setupMenuSettings(container, showKeys, showNames) {
+export function setupMenuSettings(container, showLabels) {
   container.innerHTML = `
-    ${toggle('showKeys', ICONS.keyboard, 'Show keys on pads')}
-    ${toggle('showNames', ICONS.grid, 'Show names on pads')}
+    ${toggle('showKeys', ICONS.keyboard, 'Show keyboard keys')}
+    ${toggle('showNames', ICONS.grid, 'Show instrument names').replace('data-setting', 'data-names data-setting')}
     ${toggle('flashLights', ICONS.sun, 'Flashing lights')}
     <button type="button" class="icon-button menu-toggle" role="menuitemcheckbox" data-keep-open data-metronome
       aria-checked="false">${ICONS.metronome}<span class="button-label">Metronome</span><span class="menu-switch" aria-hidden="true"></span></button>
@@ -33,21 +32,19 @@ export function setupMenuSettings(container, showKeys, showNames) {
     </div>`;
 
   const apply = {
-    showKeys: () => showKeys(settings.showKeys),
-    showNames: () => showNames(settings.showNames),
+    showKeys: showLabels,
+    showNames: showLabels,
+    showKitNames: showLabels,
     flashLights: () => applyFlashSetting(),
   };
   function mark() {
+    // One names switch, remembered per view: off by default on the drawn drums, on for the Pad grid's tiles.
+    container.querySelector('[data-names]').dataset.setting = settings.view === 'grid' ? 'showNames' : 'showKitNames';
     container.querySelectorAll('[data-setting]').forEach((button) =>
       button.setAttribute('aria-checked', String(Boolean(settings[button.dataset.setting]))));
     const on = isMetronomeOn();
     container.querySelector('[data-metronome]').setAttribute('aria-checked', String(on));
     container.querySelector('.menu-tempo').classList.toggle('is-off', !on);
-    // Names only show on the Pad grid, so in the drum kit view the switch is greyed, with a note saying where they show.
-    const names = container.querySelector('[data-setting=showNames]');
-    names.disabled = settings.view !== 'grid';
-    names.title = names.disabled ? 'Names show in Pad grid view' : '';
-    names.querySelector('.button-label').innerHTML = `Show names on pads${names.disabled ? '<span class="menu-note">Pad grid view only</span>' : ''}`;
     container.querySelectorAll('[data-tempo]').forEach((step) => { step.disabled = !on; });
   }
   // The metronome chip by Rec can switch the metronome off too.

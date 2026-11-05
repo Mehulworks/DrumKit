@@ -1,5 +1,6 @@
 // Lesson focus: while a lesson or beat is open, the drums it uses get a label with their name and key ("Snare · S"),
-// shown even when "Show keys" is off, and the drums it does not use are dimmed a little. On touch screens (no keyboard)
+// shown even when "Show keys" is off, and the drums it does not use are darkened (silent, see lesson-lock.js; a mouse
+// pointer over one shows "not allowed"). On touch screens (no keyboard)
 // the label is just the name, and the pad grid's tiles (which show their name) get none. Never takes clicks.
 import { keyName } from './key-labels.js';
 
@@ -19,6 +20,7 @@ export function createLessonFocus(svg, pads) {
   function clear() {
     layer.innerHTML = '';
     svg.querySelectorAll('.pad-art.is-dimmed').forEach((group) => group.classList.remove('is-dimmed'));
+    svg.querySelectorAll('.hit-area.is-unused').forEach((area) => area.classList.remove('is-unused'));
   }
 
   return {
@@ -26,6 +28,7 @@ export function createLessonFocus(svg, pads) {
     show(ids) {
       clear();
       svg.querySelectorAll('.pad-art').forEach((group) => group.classList.toggle('is-dimmed', !ids.has(group.dataset.artPad)));
+      svg.querySelectorAll('.hit-area').forEach((area) => area.classList.toggle('is-unused', !ids.has(area.dataset.pad)));
       layer.innerHTML = pads.filter((pad) => ids.has(pad.id)).map((pad) => {
         // A Pad grid tile already shows its name: a small key badge in its corner (screen pixels), so the drawing stays
         // in view.
@@ -44,8 +47,8 @@ export function createLessonFocus(svg, pads) {
         }
         const text = hasKeyboard() ? `${pad.label} · ${keyName(pad.key)}` : pad.label;
         const width = 30 + text.length * 13;
-        // Below the centre on round pieces, so the label does not hide the wing nut or clutch.
-        const y = pad.w ? pad.y : pad.y + pad.r * 0.55;
+        // Below the centre on round pieces, so the label does not hide the wing nut or clutch; low on the kick (stickers).
+        const y = pad.w ? pad.y + pad.h * 0.3 : pad.y + pad.r * 0.55;
         return `<g class="key-label lesson-label">
           <rect x="${pad.x - width / 2}" y="${y - 21}" width="${width}" height="42" rx="21"/>
           <text x="${pad.x}" y="${y}" text-anchor="middle" dominant-baseline="central">${text}</text></g>`;

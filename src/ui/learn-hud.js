@@ -1,5 +1,5 @@
 // Lesson scoreboard: floats over the top of the kit area while you practise: a big verdict that pops after each hit
-// (Perfect!, Early, Late, Miss; Nice! or Not that one in step-by-step mode), the streak, the score and a bar showing it
+// (Perfect!, Early, Late, Miss; Nice! or Not that one in step-by-step mode; a muted Ready until the first), the streak, the score and a bar showing it
 // against the 80% pass mark. The count-in shows in the beat grid's Ready box. It never takes clicks, so the drums
 // underneath still play.
 
@@ -16,7 +16,7 @@ export function setupLearnHud(hud, kitArea) {
       <span class="hud-stat"><b class="hud-streak">0</b><small>streak</small></span>
       <span class="hud-stat"><b class="hud-score">0%</b><small>on time</small></span>
       <span class="hud-goal"><span class="hud-goal-bar" aria-hidden="true"><i class="hud-goal-fill"></i><b class="hud-goal-mark"></b></span>
-        <span class="hud-goal-text" aria-live="polite"></span></span>
+        <span class="hud-goal-text" aria-live="polite"><b class="goal-num"></b><span class="goal-long"></span><span class="goal-short"></span></span></span>
     </div>`;
   const word = hud.querySelector('.hud-word');
 
@@ -33,8 +33,8 @@ export function setupLearnHud(hud, kitArea) {
       place();
       hud.hidden = false;
       hud.classList.toggle('is-steps', steps);
-      word.textContent = '';
-      word.removeAttribute('data-verdict');
+      word.textContent = 'Ready'; // so the scoreboard never looks empty during the count-in
+      word.dataset.verdict = 'ready';
     },
     hide() {
       hud.hidden = true;
@@ -47,8 +47,13 @@ export function setupLearnHud(hud, kitArea) {
       const fill = hud.querySelector('.hud-goal-fill');
       fill.style.width = `${score}%`;
       fill.classList.toggle('is-passing', locked || score >= 80);
-      hud.querySelector('.hud-goal-text').textContent = locked ? 'Passed ✓'
-        : need === undefined ? '80% to pass' : `${need} more hit${need === 1 ? '' : 's'} to pass`;
+      // The number in bold, the words smaller; phones show the short form ("13 to pass"), so it fits on one line.
+      const goal = locked ? ['Passed ✓', '', ''] : need === undefined ? ['80%', ' to pass', ' to pass']
+        : [String(need), ` more hit${need === 1 ? '' : 's'} to pass`, ' to pass'];
+      const text = hud.querySelector('.hud-goal-text');
+      text.querySelector('.goal-num').textContent = goal[0];
+      text.querySelector('.goal-long').textContent = goal[1];
+      text.querySelector('.goal-short').textContent = goal[2];
     },
     /** Pops the word for a verdict. */
     verdict(verdict) {

@@ -4,7 +4,7 @@
 import { ICONS } from './icons.js';
 import { createDrawer } from './drawer.js';
 import { spotlight } from './spotlight.js';
-import { creditLine, repoLink } from './credits.js';
+import { creditLine, aboutLinks } from './credits.js';
 import { recordPicture, addLayerPicture, layeringPicture, stackPicture, metronomePicture, keyboardPicture } from './help-visuals.js';
 
 const icon = (name) => `<span class="help-icon" aria-hidden="true">${ICONS[name]}</span>`;
@@ -76,7 +76,7 @@ export function setupHelpDrawer(button, panel, pads, maxLayers, targets) {
       <p>${icon('crowd')} <strong>Concert</strong> puts a crowd and stage lights behind your kit. They bob to the tempo, raise their hands on your crashes, jump when you play fast and cheer when you stop. The lights glow gently; switch off <strong>Flashing lights</strong> in the ⋮ menu to keep them still. Learn and Concert take turns: a lesson pauses Concert, and it comes back when the lesson ends. You can record during Concert.</p>
       <button type="button" class="try-button" data-try="concert">Try it</button>`)}
     ${section('settings', 'More menu', `
-      <p>${icon('more')} The ⋮ button holds EQ, Focus, light or dark mode, the settings (key names on the drums, Flashing lights, the metronome and its tempo), How to play and Reset all.</p>`)}
+      <p>${icon('more')} The ⋮ button holds EQ, Focus, light or dark mode, the settings (key and instrument names on the drums, Flashing lights, the metronome and its tempo), How to play and Reset all.</p>`)}
     ${section('privacy', 'Privacy', `
       <p>Everything stays in this browser. Recordings last until you reload the page; your settings are remembered on this device. Nothing is uploaded.</p>`)}
     ${section('keys', 'Playing and keys', `
@@ -84,7 +84,7 @@ export function setupHelpDrawer(button, panel, pads, maxLayers, targets) {
       <div class="help-keys-map"></div>`)}
     ${section('about', 'About', `
       <p>${creditLine('about-link')}</p>
-      ${repoLink('about-link') ? `<p>${repoLink('about-link')}</p>` : ''}`)}
+      <p>${aboutLinks('about-link')}</p>`)}
   </div>`;
   panel.classList.add('drawer-wide');
   const drawer = createDrawer(button, panel);
